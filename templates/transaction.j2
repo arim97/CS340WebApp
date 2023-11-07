@@ -1,0 +1,65 @@
+<!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
+ <caption>Transactions</caption>
+    <table border="1" cellpadding="5">
+    <thead>
+    
+    <tr>
+        <!-- Iterate through each key in the first entry to get the
+        column name -->
+        {% for key in Transactions[0].keys() %}
+
+        <!-- Create a <th> tag with the key inside of it, this will be
+        our header row -->
+        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+        <!-- End of this for loop -->
+        {% endfor %}
+    </tr>
+    <tbody>
+
+    <!-- Now, iterate through every transaction in Transactions-->
+    {% for transaction in Transactions %}
+    <tr>
+        <!-- Then iterate through every key in the current transaction dictionary -->
+        {% for key in transaction.keys() %}
+        <!-- Create a <td> element with the value of that key in it -->
+        <td>{{transaction[key]}}</td>
+        {% endfor %}
+        <td><a href="edit_Transactions/{{transaction.id}}" class="btn btn-default">Edit</a></td>
+		<td><a href="delete_Transactions/{{transaction.id}}" class="btn btn-default">Delete</a></td>
+    </tr>
+    {% endfor %}
+    </table>
+    <td><a href="/" class="btn btn-default">Return</a></td>
+
+
+
+    <div id="insert">
+		<!-- form to INSERT new data into Transactions-->
+		<form id="insertTransaction" action="/transaction/" method="post">
+			<legend><strong>Add Person</strong></legend>
+			<fieldset>
+                <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
+				<label for="sender">From:</label>
+				<input type="text" class="form-control" id="sender_id" name="sender" pattern="[0-9]{1,}" placeholder="">
+				<label for="destination">To:</label>
+				<input type="text" class="form-control" id="destination" name="destination" pattern="[0-9]{1,}" placeholder="">
+				<label for="amount">Amount:</label>
+				<input type="text" class="form-control" id="amount" name="amount" pattern="[0-9]{1,}" placeholder="" required>
+                <label for="date">Date:</label>
+                <input type="date" id="start" name="date" value="2023-11-03" min="2023-11-01" max="2025-12-31" required />
+				<select class="form-control" id="type" name="type" pattern="[0-3]{1}" placeholder="" required>
+				<!-- these are hard coded, but you can add code to make this dynamic -->
+					<option value="0">&nbsp;</option>
+					<option value="1">Transfer</option>
+					<option value="2">Withdrawal</option>
+					<option value="3">Deposit</option>
+			
+				</select>
+				<label for="comments">Comments:</label>
+				<input type="text" class="form-control" id="comment" name="phone" commentn="[A-Za-z0-9]{1,}" placeholder="" required> 
+            </fieldset>
+
+            <!-- Create 'Add Transaction' and 'Cancel' buttons -->
+			<input type="submit" value="Add Transaction" name="Add_Transaction" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browseTransaction()"> 
+        </form>

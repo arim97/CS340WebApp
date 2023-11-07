@@ -1,0 +1,38 @@
+     <!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
+    
+    <!DOCTYPE html>
+    <html>
+    <link rel="stylesheet" href="/style.css">
+    <caption>Accounts</caption>
+    <table border="1" cellpadding="5">
+    <thead>
+    
+    <tr>
+        <!-- Iterate through each key in the first entry to get the
+        column name -->
+        {% for key in Accounts[0].keys() %}
+
+        <!-- Create a <th> tag with the key inside of it, this will be
+        our header row -->
+        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+        <!-- End of this for loop -->
+        {% endfor %}
+    </tr>
+    <tbody>
+
+    <!-- Now, iterate through every account in Accounts -->
+    {% for account in Accounts %}
+    <tr>
+        <!-- Then iterate through every key in the current account dictionary -->
+        {% for key in account.keys() %}
+        <!-- Create a <td> element with the value of that key in it -->
+        <td>{{account[key]}}</td>
+        {% endfor %}
+        <td><a href="transaction/{{account.account_id}}" class="btn btn-default">Edit</a></td>
+        <td><a href="edit_Accounts/{{account.account_id}}" class="btn btn-default">Edit</a></td>
+		<td><a href="delete_Accounts/{{account.account_id}}" class="btn btn-default">Delete</a></td>
+    </tr>
+    {% endfor %}
+    </table>
+    <td><a href="/" class="btn btn-default">Return</a></td>
+</html>

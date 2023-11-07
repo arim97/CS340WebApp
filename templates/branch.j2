@@ -1,0 +1,31 @@
+ <caption>Branches</caption>
+    <table border="1" cellpadding="5">
+    <thead>
+    
+    <tr>
+        <!-- Iterate through each key in the first entry to get the
+        column name -->
+        {% for key in Branches[0].keys() %}
+
+        <!-- Create a <th> tag with the key inside of it, this will be
+        our header row -->
+        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+        <!-- End of this for loop -->
+        {% endfor %}
+    </tr>
+    <tbody>
+
+    <!-- Now, iterate through every branch in Branches -->
+    {% for branch in Branches %}
+    <tr>
+        <!-- Then iterate through every key in the current branch dictionary -->
+        {% for key in branch.keys() %}
+        <!-- Create a <td> element with the value of that key in it -->
+        <td>{{branch[key]}}</td>
+        {% endfor %}
+        <td><a href="edit_Branches/{{branch.branch_id}}" class="btn btn-default">Edit</a></td>
+		<td><a href="delete_Branch/{{branch.branch_id}}" class="btn btn-default">Delete</a></td>
+    </tr>
+    {% endfor %}
+    </table>
+    <td><a href="/" class="btn btn-default">Return</a></td>
