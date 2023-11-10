@@ -1,8 +1,11 @@
+
 from flask import Flask, render_template, json, redirect
 from flask_mysqldb import MySQL
 from flask import request
+import database.db_connector as db
 import os
-
+db_connection = db.connect_to_database()
+app = Flask(__name__,template_folder='templates')
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
