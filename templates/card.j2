@@ -1,37 +1,28 @@
-     <!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
-    
-    <!DOCTYPE html>
-    <html>
-    <link rel="stylesheet" href="/style.css">
-    <caption>Cards</caption>
-    <table border="1" cellpadding="5">
-    <thead>
-    
-    <tr>
-        <!-- Iterate through each key in the first entry to get the
-        column name -->
-        {% for key in Cards[0].keys() %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div class="tabs">
+        <a href="/" class="tab">Home</a> 
+    </div>
 
-        <!-- Create a <th> tag with the key inside of it, this will be
-        our header row -->
-        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
-        <!-- End of this for loop -->
-        {% endfor %}
-    </tr>
-    <tbody>
-
-    <!-- Now, iterate through every card in Cards -->
-    {% for card in Cards %}
-    <tr>
-        <!-- Then iterate through every key in the current Card dictionary -->
-        {% for key in card.keys() %}
-        <!-- Create a <td> element with the value of that key in it -->
-        <td>{{card[key]}}</td>
-        {% endfor %}
-        <td><a href="edit_Cards/{{card.card_id}}" class="btn btn-default">Edit</a></td>
-		<td><a href="delete_Cards/{{card.card_id}}" class="btn btn-default">Delete</a></td>
-    </tr>
-    {% endfor %}
-    </table>
-    <td><a href="/" class="btn btn-default">Return</a></td>
+    <h2>Update Card</h2>
+    <form method="POST">
+        <label for="card_id">card_id:</label>
+        <input type="number" id="card_id" name="card_id" value="{{ Cards.card_id }}">
+        <br>
+        <label for="account_id">account_id:</label>
+        <input type="number" id="account_id" name="account_id" value="{{ Cards.account_id }}">
+        <br>
+        <label for="security_code">scc:</label>
+        <input type="number" id="security_code" name="security_code" value="{{ Cards.security_code }}">
+        <br>
+        <label for="exp_date">exp_date:</label>
+        <input type="date" id="exp_date" name="exp_date" value="{{ Cards.exp_date }}">
+        <br>
+        <input type="submit" value="Update Card">
+    </form>
+</body>
 </html>

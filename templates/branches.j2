@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Branches</title>
+    <style>
+        .tab {
+            padding: 10px;
+            margin: 5px;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            text-decoration: none;
+            color: black;
+        }
+
+        .tab:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<div class="tabs">
+        <a href="/" class="tab">Home</a> 
+        
+    </div>
+    <h1>Branches</h1>
+    
+    <h2>Add New Branches</h2>
+    <form method="POST">
+    <legend><strong>Add Branch</strong></legend>
+        <fieldset class="fields">
+        <label for="branch_id">branch_id:</label>
+        <input type="number" id="branch_id" name="branch_id">
+        <br>
+        <label for="branch_name">branch_name</label>
+        <input type="text" id="branch_name" name="branch_name" required>
+        <br>
+        <label for="address">address:</label>
+        <input type="text" id="address" name="address">
+        <br>
+        <label for="phone">phone:</label>
+        <input type="text" id="phone" name="phone">
+        <br>
+        <label for="manager">manager:</label>
+        <input type="text" id="manager" name="manager">
+        <br>
+        <input type="submit" value="Add Branch">
+    </form>
+
+    <h2>Branches</h2>
+    <table border="3" cellpadding="5">
+    <thead>
+    <tr>
+        {% for key in Branches[0].keys() %}
+            <th>{{ key }}</th>
+        {% endfor %}
+        <th>EDIT</th>
+        <th>DELETE</th>
+    </tr>
+    <tbody>
+        {% for branch in Branches %}
+        <tr>
+            {% for key in branch.keys() %}
+                <td>{{branch[key]}}</td>
+            {% endfor %}
+            <td><a href="/branches/{{branch.branch_id}}" class="btn btn-default">EDIT</a></td>
+            <td><a href="/delete_branch/{{branch.branch_id}}" class="btn btn-default">DELETE</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
