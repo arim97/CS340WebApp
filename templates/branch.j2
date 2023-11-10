@@ -1,31 +1,31 @@
- <caption>Branches</caption>
-    <table border="1" cellpadding="5">
-    <thead>
-    
-    <tr>
-        <!-- Iterate through each key in the first entry to get the
-        column name -->
-        {% for key in Branches[0].keys() %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div class="tabs">
+        <a href="/" class="tab">Home</a> 
+    </div>
 
-        <!-- Create a <th> tag with the key inside of it, this will be
-        our header row -->
-        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
-        <!-- End of this for loop -->
-        {% endfor %}
-    </tr>
-    <tbody>
-
-    <!-- Now, iterate through every branch in Branches -->
-    {% for branch in Branches %}
-    <tr>
-        <!-- Then iterate through every key in the current branch dictionary -->
-        {% for key in branch.keys() %}
-        <!-- Create a <td> element with the value of that key in it -->
-        <td>{{branch[key]}}</td>
-        {% endfor %}
-        <td><a href="edit_Branches/{{branch.branch_id}}" class="btn btn-default">Edit</a></td>
-		<td><a href="delete_Branch/{{branch.branch_id}}" class="btn btn-default">Delete</a></td>
-    </tr>
-    {% endfor %}
-    </table>
-    <td><a href="/" class="btn btn-default">Return</a></td>
+    <h2>Update Branch</h2>
+    <form method="POST">
+        <label for="branch_id">branch_id:</label>
+        <input type="number" id="branch_id" name="branch_id" value="{{ Branch.branch_id }}">
+        <br>
+        <label for="branch_name">branch_name:</label>
+        <input type="text" id="branch_name" name="branch_name" value="{{ Branch.branch_name }}">
+        <br>
+        <label for="address">address:</label>
+        <input type="text" id="address" name="address" value="{{ Branch.address }}">
+        <br>
+        <label for="phone">phone:</label>
+        <input type="text" id="phone" name="phone" value="{{ Branch.phone }}">
+        <br>
+        <label for="manager">manager:</label>
+        <input type="text" id="manager" name="manager" value="{{ Branch.manager }}">
+        <br>
+        <input type="submit" value="Update Branch">
+    </form>
+</body>
+</html>

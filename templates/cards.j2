@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cards</title>
+    <style>
+        .tab {
+            padding: 10px;
+            margin: 5px;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            text-decoration: none;
+            color: black;
+        }
+
+        .tab:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<div class="tabs">
+        <a href="/" class="tab">Home</a> 
+        
+    </div>
+    <h1>Cards</h1>
+    
+    <h2>Add New Card</h2>
+    <form method="POST">
+    <legend><strong>Add Card</strong></legend>
+        <fieldset class="fields">
+        <label for="card_id">card_id:</label>
+        <input type="number" id="card_id" name="card_id">
+        <br>
+        <label for="account_id">account_id</label>
+        <input type="number" id="account_id" name="account_id" required>
+        <br>
+        <label for="security_code">scc:</label>
+        <input type="number" id="security_code" name="security_code">
+        <br>
+        <label for="exp_date">exp_date:</label>
+        <input type="date" id="exp_date" name="exp_date">
+        <br>
+        <input type="submit" value="Add Card">
+    </form>
+
+    <h2>Cards</h2>
+    <table border="3" cellpadding="5">
+    <thead>
+    <tr>
+        {% for key in Cards[0].keys() %}
+            <th>{{ key }}</th>
+        {% endfor %}
+        <th>EDIT</th>
+        <th>DELETE</th>
+    </tr>
+    <tbody>
+        {% for card in Cards %}
+        <tr>
+            {% for key in card.keys() %}
+                <td>{{card[key]}}</td>
+            {% endfor %}
+            <td><a href="/cards/{{card.card_id}}" class="btn btn-default">EDIT</a></td>
+            <td><a href="/delete_card/{{card.card_id}}" class="btn btn-default">DELETE</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

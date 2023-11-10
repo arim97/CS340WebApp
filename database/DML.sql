@@ -57,6 +57,10 @@ FROM Accounts
 INNER JOIN Transactions ON Accounts.account_id = Transactions.destination_id AND Accounts.account_id = Transactions.sender_id
 WHERE Accounts.account_id = :aidInput;
 
+UPDATE Cards SET account_id = %s,security_code = %s, exp_date = %s WHERE card_id = %s;
+
+UPDATE Branches SET branch_name = %s,address = %s, phone = %s, manager = %s WHERE branch_id = %s;
+
 ----------------------------------------------------------------------------------
 ------ DELETE  -------------------------------------------------------------------
 ----------------------------------------------------------------------------------
@@ -76,3 +80,6 @@ WHERE transaction_id = :tidInput;
 -- Delete a card
 DELETE FROM Cards
 WHERE card_id = :cidInput;
+
+DELETE FROM Branches
+WHERE branch_id = :cidInput;
