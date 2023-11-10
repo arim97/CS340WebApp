@@ -1,61 +1,152 @@
+<html>
 <!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
-   
-   <caption>Customers</caption>
-    <table border="1" cellpadding="5">
-    <thead>
-    
-    <tr>
-        <!-- Iterate through each key in the first entry to get the
-        column name -->
-        {% for key in Customers[0].keys() %}
 
-        <!-- Create a <th> tag with the key inside of it, this will be
-        our header row -->
-        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
-        <!-- End of this for loop -->
-        {% endfor %}
-    </tr>
-    <tbody>
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="/style.css">
 
-    <!-- Now, iterate through every customer in Customers -->
-    {% for customer in Customers %}
-    <tr>
-        <!-- Then iterate through every key in the current customer dictionary -->
-        {% for key in customer.keys() %}
-        <!-- Create a <td> element with the value of that key in it -->
-        <td>{{customer[key]}}</td>
-        {% endfor %}
-        <td><a href="edit_Customers/{{customer.id}}" class="btn btn-default">Edit</a></td>
-		<td><a href="delete_Customers/{{customer.id}}" class="btn btn-default">Delete</a></td>
-    </tr>
-    {% endfor %}
-    </table>
+<head>
+    <title>People</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script language="JavaScript">
+        function showform(dowhat) {
+            /*
+             * four DIVS: browse, insert, update, delete
+             * this function sets one visible the others not
+             */
+            if (dowhat == 'insert') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('edit').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            } else if (dowhat == 'update') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('edit').style.display = 'block';
+                document.getElementById('delete').style.display = 'none';
+            } else if (dowhat == 'delete') {
+                document.getElementById('browse').style.display = 'none';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('edit').style.display = 'none';
+                document.getElementById('delete').style.display = 'block';
+            } else if (dowhat == 'all') {
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'block';
+                document.getElementById('edit').style.display = 'block';
+                document.getElementById('delete').style.display = 'block';
+            } else { //by default display browse
+                document.getElementById('browse').style.display = 'block';
+                document.getElementById('insert').style.display = 'none';
+                document.getElementById('edit').style.display = 'none';
+                document.getElementById('delete').style.display = 'none';
+            }
+        }
+
+        function newCustomer() {
+            showform('insert');
+        }
+
+        function updateCustomer(cid) {
+            showform('update');
+        }
+
+        function deleteCustomer(cid) {
+            showform('delete');
+        }
+
+        function browseCustomers() {
+            showform('browse');
+        }
+
+        function showAll() {
+            showform('all');
+        }
+    </script>
+</head>
+
+<body>
+    <div id="browse">
+        <caption>Customers</caption>
+        <table border="1" cellpadding="5">
+            <thead>
+
+                <tr>
+                    <!-- Iterate through each key in the first entry to get the
+                    column name -->
+                    {% for key in customer[0].keys() %}
+
+                    <!-- Create a <th> tag with the key inside of it, this will be
+                    our header row -->
+                    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                    <!-- End of this for loop -->
+                    {% endfor %}
+                </tr>
+            <tbody>
+
+
+                <!-- Now, iterate through every customer in customers -->
+                {% for customer in customer %}
+                <tr>
+                    <!-- Then iterate through every key in the current customer dictionary -->
+                    {% for key in customer.keys() %}
+                    <!-- Create a <td> element with the value of that key in it -->
+                    <td>{{customer[key]}}</td>
+                    {% endfor %}
+                    <td><a href="edit_customers/{{customer.customer_id}}" class="btn btn-default">Edit</a></td>
+                    <td><a href="delete_customers/{{customer.customer_id}}" class="btn btn-default">Delete</a></td>
+                </tr>
+                {% endfor %}
+
+        </table>
+        <p>&nbsp;</p>
+    </div> <!-- browse -->
     <td><a href="/" class="btn btn-default">Return</a></td>
-   
-   
-   
-   
-   
-   
-   
-    <div id="insert">
-		<!-- form to INSERT new data into Customers-->
-		<form id="insertCustomer" action="/customers" method="post">
-			<legend><strong>Add Person</strong></legend>
-			<fieldset>
-                <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-				<label for="name">Name:</label>
-				<input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z]{1,}" placeholder="" required>
 
-				<label for="address">Address:</label>
-				<input type="text" class="form-control" id="address" name="address" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+
+    <div id="insert">
+        <!-- form to INSERT new data into Customers-->
+        <form id="insertCustomer" action="/customer" method="post">
+            <legend><strong>Add Customer</strong></legend>
+            <fieldset>
+                <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z]{1,}" placeholder="" required>
+
+                <label for="address">Address:</label>
+                <input type="text" class="form-control" id="address" name="address" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
                 <label for="dob">Date of Birth:</label>
                 <input type="date" id="start" name="dob" value="2005-01-01" min="1900-01-01" max="2023-12-31" required />
-				<label for="phone">Phone No.:</label>
-				<input type="text" class="form-control" id="phone" name="phone" pattern="[0-9]{1,}" placeholder="" required> 
+                <label for="phone">Phone No.:</label>
+                <input type="text" class="form-control" id="phone" name="phone" pattern="[0-9]{1,}" placeholder="" required>
             </fieldset>
 
-            <!-- Create 'Add Person' and 'Cancel' buttons -->
-			<input type="submit" value="Add Person" name="Add_Person" class="btn btn-primary" style="margin:.5rem;">
-			<input class="btn" type="button" value="Cancel" onClick="browsePeople()"> 
+            <!-- Create 'Add Customer' and 'Cancel' buttons -->
+            <input type="submit" value="Add Customer" name="Add_Customer" class="btn btn-primary" style="margin:.5rem;">
+            <input class="btn" type="button" value="Cancel" onClick="browseCustomers()">
         </form>
+        <div id="edit">
+            <!-- form to edit data in customers-->
+            <form id="editCustomer" action="/edit_customers/{{customer[0].customer_id}}" method="post">
+                <legend><strong>Edit Customer</strong></legend>
+                <fieldset>
+                    <input type="hidden" value="{{customer[0].customer_id}}" class="form-control" id="customerID" name="customerID" required>
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="{{customer[0].name}}" required>
+
+                    <label for="address">Address:</label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="{{customer[0].address}}" required>
+
+                    <label for="phone">Phone:</label>
+                    <input type="text" class="form-control" id="phone" name="phone" placeholder="{{customer[0].phone}}" required>
+
+                    <label for="date_of_birth">Date of Birth:</label>
+                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" placeholder="{{customer[0].date_of_birth}}" required>
+                </fieldset>
+                <input class="btn" type="submit" value="Edit Customer">
+                <input class="btn" type="button" value="Cancel" onClick="browseCustomers()" style="margin:.5rem;">
+            </form>
+        </div><!--edit-->
+
+</body>
+
+</html>

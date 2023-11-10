@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <title>Edit Customer</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div>
+        <table border="1" cellpadding="5"> 
+            <caption> Editing Customer: </caption>
+            <!-- Access customer tuple passed from app.py -->
+            {% if customer %}
+                <thead>
+                    <tr>
+                        <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in customer[0].keys() %}
+
+                        <!-- Create a <th> tag with the key inside of it, this will be our header row -->
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+
+                <tbody>
+                    <!-- Now, iterate through every item in customer -->
+                    {% for item in customer %}
+                    <tr>
+                        <!-- Then iterate through every key in the current item dictionary -->
+                        {% for key in item.keys() %}
+                        
+                        <!-- Create a <td> element with the value of that key in it -->
+                        <td>{{item[key]}}</td> {% endfor %} 
+                    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>
+
+        <div id="edit">
+            <!-- form to edit data in Customers-->
+            <form id="editCustomer" action="/edit_customers/{{customer[0].id}}" method="post">
+                <legend><strong>Edit Customer</strong></legend>
+                <fieldset>
+                    <!-- We can preset form inputs to match attributes currently stored for 'id' of customer to be updated via value= and accessing our passed customer tuple -->
+                    <!-- Create hidden form input to store the passed 'id' of the customer we are editing so we can access it easily in our 'POST' method in our app.py -->
+                    <input type="hidden" value="{{customer[0].id}}" class="form-control" id="customerID" name="customerID" required>
+                    <label for="name">Customer Name:</label>
+
+                    <input type="text" value="{{customer[0].name}}" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" required>
+                    <label for="email">Customer Email:</label>
+
+                    <input type="text" value="{{customer[0].email}}" class="form-control" id="email" name="email" pattern="[A-Za-z0-9]{1,}" required>
+                    <label for="phone">Customer Phone:</label>
+
+                    <input type="text" value="{{customer[0].phone}}" class="form-control" id="phone" name="phone" pattern="[0-9]{1,}" required> 
+                
+                </fieldset>
+                <input type="submit" value="Edit Customer" name="Edit_Customer" class="btn btn-primary" style="margin:.5rem;">
+                <a href='/customers'><input class="btn" type="button" value="cancel"></a>
+            </form>
+
+</html>
