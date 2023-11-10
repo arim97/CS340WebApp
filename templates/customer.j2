@@ -68,12 +68,13 @@
     <div id="browse">
         <caption>Customers</caption>
         <table border="1" cellpadding="5">
+        {% if customers %}
             <thead>
 
                 <tr>
                     <!-- Iterate through each key in the first entry to get the
                     column name -->
-                    {% for key in customer[0].keys() %}
+                    {% for key in customers[0].keys() %}
 
                     <!-- Create a <th> tag with the key inside of it, this will be
                     our header row -->
@@ -85,18 +86,18 @@
 
 
                 <!-- Now, iterate through every customer in customers -->
-                {% for customer in customer %}
+                {% for customer in customers %}
                 <tr>
                     <!-- Then iterate through every key in the current customer dictionary -->
                     {% for key in customer.keys() %}
                     <!-- Create a <td> element with the value of that key in it -->
                     <td>{{customer[key]}}</td>
                     {% endfor %}
-                    <td><a href="edit_customers/{{customer.customer_id}}" class="btn btn-default">Edit</a></td>
-                    <td><a href="delete_customers/{{customer.customer_id}}" class="btn btn-default">Delete</a></td>
+                    <td><a href="edit_customer/{{customer.customer_id}}" class="btn btn-default">Edit</a></td>
+                    <td><a href="delete_customer/{{customer.customer_id}}" class="btn btn-default">Delete</a></td>
                 </tr>
                 {% endfor %}
-
+        {% endif %}
         </table>
         <p>&nbsp;</p>
     </div> <!-- browse -->
@@ -110,10 +111,10 @@
             <fieldset>
                 <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
                 <label for="name">Name:</label>
-                <input type="text" class="form-control" id="fname" name="fname" pattern="[A-Za-z]{1,}" placeholder="" required>
+                <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
 
                 <label for="address">Address:</label>
-                <input type="text" class="form-control" id="address" name="address" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+                <input type="text"  id="address" name="address" pattern="[A-Za-z0-9]{1,}"" placeholder="" required>
                 <label for="dob">Date of Birth:</label>
                 <input type="date" id="start" name="dob" value="2005-01-01" min="1900-01-01" max="2023-12-31" required />
                 <label for="phone">Phone No.:</label>
@@ -126,21 +127,21 @@
         </form>
         <div id="edit">
             <!-- form to edit data in customers-->
-            <form id="editCustomer" action="/edit_customers/{{customer[0].customer_id}}" method="post">
+            <form id="Edit_Customer" action="/edit_customer/{{customers[0].customer_id}}" method="post">
                 <legend><strong>Edit Customer</strong></legend>
                 <fieldset>
-                    <input type="hidden" value="{{customer[0].customer_id}}" class="form-control" id="customerID" name="customerID" required>
+                    <input type="hidden" value="{{customers[0].customer_id}}" class="form-control" id="customerID" name="customerID" required>
                     <label for="name">Name:</label>
-                    <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="{{customer[0].name}}" required>
+                    <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]" placeholder="{{customers[0].name}}" required>
 
                     <label for="address">Address:</label>
-                    <input type="text" class="form-control" id="address" name="address" placeholder="{{customer[0].address}}" required>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="{{customers[0].address}}" required>
 
                     <label for="phone">Phone:</label>
-                    <input type="text" class="form-control" id="phone" name="phone" placeholder="{{customer[0].phone}}" required>
+                    <input type="text" class="form-control" id="phone" name="phone" placeholder="{{customers[0].phone}}" required>
 
                     <label for="date_of_birth">Date of Birth:</label>
-                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" placeholder="{{customer[0].date_of_birth}}" required>
+                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" placeholder="{{customers[0].date_of_birth}}" required>
                 </fieldset>
                 <input class="btn" type="submit" value="Edit Customer">
                 <input class="btn" type="button" value="Cancel" onClick="browseCustomers()" style="margin:.5rem;">

@@ -23,13 +23,75 @@ def root():
 # Accounts page route
 @app.route('/account',  methods=["POST", "GET"])
 def Accounts():
-    query1 = "SELECT account_id AS 'Account No.' , balance AS Balance FROM Accounts ;"
-    query2 = "SELECT * FROM Cards;"
+    # Separate out the request methods, in this case this is for a POST
+    # insert an account into the accounts entity
+    if request.method == "POST":
+        # fire off if user presses the Add Account button
+        if request.form.get("Add_Account"):
+            # grab user form inputs
+            balance = request.form["balance"]
+            query = "INSERT INTO accounts (balance) VALUES (%s)"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (balance))
+            mysql.connection.commit()
+
+            # redirect back to accounts page
+            return redirect("/account")
+
+    # Grab accounts data so we send it to our template to display
+    if request.method == "GET":
+        # mySQL query to grab all the accounts in accounts table
+        query = "SELECT account_id AS 'Account No.', balance AS Balance FROM Accounts"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        data = cur.fetchall()
+
+        # render edit_accounts page passing our query data to the edit_accounts template
+        return render_template("account.j2", accounts=data)
+
+# route for delete functionality, deleting an account from accounts,
+# we want to pass the 'id' value of that account on button click (see HTML) via the route
+@app.route("/delete_account/<int:id>")
+def delete_account(id):
+    # mySQL query to delete the account with our passed id
+    query = "DELETE FROM accounts WHERE id = %s;"
     cur = mysql.connection.cursor()
-    cur.execute(query1)
-    results = cur.fetchall()
-    cur.execute(query2)
-    return render_template("account.j2", accounts=results)
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+
+    # redirect back to accounts page
+    return redirect("/account") 
+# route for edit functionality, updating the attributes of an account in accounts
+# similar to our delete route, we want to the pass the 'id' value of that account on button click (see HTML) via the route
+@app.route("/edit_account/<int:id>", methods=["POST", "GET"])
+def edit_accounts(id):
+    if request.method == "GET":
+        # mySQL query to grab the info of the account with our passed id
+        query = "SELECT * FROM Accounts WHERE account_id = %s" % (id)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        data = cur.fetchall()
+
+        # render edit_accounts page passing our query data to the edit_accounts template
+        return render_template("edit_account.j2", accounts=data)
+
+    if request.method == "POST":
+        # fire off if user clicks the 'Edit Account' button
+        if request.form.get("Edit_Account"):
+            # grab user form inputs
+            id = request.form["accountID"]
+    
+            balance = request.form["balance"]
+
+            query = "UPDATE accounts SET Accounts.account_id = %s, Accounts.balance = %s WHERE Accounts.account_id = %s"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (balance, id))
+            mysql.connection.commit()
+
+            # redirect back to accounts page after we execute the update query
+            return redirect("/account")
+
+
 # Transactions page route
 @app.route('/transaction/<int:id>', methods=["POST", "GET"])
 def Transactions(id):
@@ -41,23 +103,33 @@ def Transactions(id):
         return render_template("transaction.j2", Transactions=results)
 
 # Customers page route
-@app.route('/customer')
+@app.route('/customer', methods=["POST", "GET"])
 def Customers():
-    query = "SELECT * FROM Customers;"
+    query = "SELECT customer_id AS ID, name as Name, address AS Address, phone AS Phone, date_of_birth as DOB FROM Customers;"
     cur = mysql.connection.cursor()
     cur.execute(query)
     results = cur.fetchall()
-    return render_template("customer.j2", customer=results)
+    return render_template("customer.j2", customers=results)
 
-@app.route("/edit_customers/<int:id>", methods=["POST", "GET"])
-def edit_customers(id):
+@app.route("/delete_customer/<int:id>")
+def delete_customer(id):
+    # mySQL query to delete the person with our passed id
+    query = "DELETE FROM Customers WHERE customer_id = '%s';"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+    # redirect back to people page
+    return redirect("/customer")
+
+
+@app.route("/edit_customer/<int:id>", methods=["POST", "GET"])
+def edit_customer(id):
     if request.method == "GET":
         query = "SELECT * FROM Customers WHERE customer_id = %s" % (id)
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
-
-        return render_template("edit_customers.j2", customer=data)
+        return render_template("edit_customer.j2", customers=data)
 
     if request.method == "POST":
         if request.form.get("Edit_Customer"):

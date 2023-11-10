@@ -1,4 +1,4 @@
-  <!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
+<!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
     
     <!DOCTYPE html>
     <html>
@@ -59,6 +59,13 @@
 	function showAll() {
 		showform('all');
 	}
+
+    // Add an event listener to the form submit event to prevent the default behavior
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+        });
+    });
 	</script>
 </head>
 
@@ -88,8 +95,8 @@
         <td>{{account[key]}}</td>
         {% endfor %}
         <td><a href="transaction/{{account.account_id}}" class="btn btn-default">Transactions</a></td>
-        <td><a href="edit_Accounts/{{account.account_id}}" class="btn btn-default">Edit</a></td>
-		<td><a href="delete_Accounts/{{account.account_id}}" class="btn btn-default">Delete</a></td>
+        <td><a href="edit_account/{{account.account_id}}" class="btn btn-default">Edit</a></td>
+		<td><a href="delete_account/{{account.account_id}}" class="btn btn-default">Delete</a></td>
     </tr>
     {% endfor %}
     </table>
@@ -99,11 +106,11 @@
 
 	<div id="insert">
     <!-- form to INSERT new data into Accounts-->
-    <form id="insertAccount" action="/accounts" method="POST">
+    <form id="Add_Account" action="/accounts" method="POST">
         <legend><strong>Add Account</strong></legend>
         <fieldset>
             <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-            <label for="name">Account Name:</label>
+            <label for="name">Account No:</label>
             <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
 
             <label for="balance">Account Balance:</label>
