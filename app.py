@@ -92,14 +92,14 @@ def edit_accounts(id):
 
 
 # Transactions page route
-@app.route('/transaction/<int:id>', methods=["POST", "GET"])
-def Transactions(id):
-    if request.method == "GET":
-        query1 = "SELECT * FROM Transactions WHERE sender_id = %s OR destination_id = %s;"
-        cur = mysql.connection.cursor()
-        cur.execute(query1, (id, id))
-        results = cur.fetchall()
-        return render_template("transaction.j2", Transactions=results)
+@app.route('/transaction')
+def Transactions():
+    #query1 = "SELECT * FROM Transactions WHERE sender_id = %s OR destination_id = %s;"
+    query1 = "SELECT * FROM Transactions;"
+    cur = mysql.connection.cursor()
+    cur.execute(query1)
+    results = cur.fetchall()
+    return render_template("transaction.j2", Transactions=results)
 
 # Customers page route
 @app.route('/customer', methods=["POST", "GET"])
