@@ -1,10 +1,9 @@
 from flask import Flask, render_template, json, redirect
 from flask_mysqldb import MySQL
 from flask import request
-import database.db_connector as db
 import os
-db_connection = db.connect_to_database()
-app = Flask(__name__,template_folder='templates')
+
+app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
 app.config['MYSQL_USER'] = 'cs340_arim'
@@ -23,6 +22,18 @@ def root():
 # Accounts page route
 @app.route('/account',  methods=["POST", "GET"])
 def Accounts():
+    # Grab accounts data so we send it to our template to display
+    if request.method == "GET":
+        # mySQL query to grab all the accounts in accounts table
+        query = "SELECT account_id AS 'Account No.', balance AS Balance FROM Accounts"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        data = cur.fetchall()
+
+        # render edit_accounts page passing our query data to the edit_accounts template
+        return render_template("account.j2", accounts=data)
+    
+
     # Separate out the request methods, in this case this is for a POST
     # insert an account into the accounts entity
     if request.method == "POST":
@@ -38,16 +49,6 @@ def Accounts():
             # redirect back to accounts page
             return redirect("/account")
 
-    # Grab accounts data so we send it to our template to display
-    if request.method == "GET":
-        # mySQL query to grab all the accounts in accounts table
-        query = "SELECT account_id AS 'Account No.', balance AS Balance FROM Accounts"
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-        data = cur.fetchall()
-
-        # render edit_accounts page passing our query data to the edit_accounts template
-        return render_template("account.j2", accounts=data)
 
 # route for delete functionality, deleting an account from accounts,
 # we want to pass the 'id' value of that account on button click (see HTML) via the route
@@ -58,9 +59,9 @@ def delete_account(id):
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
-
     # redirect back to accounts page
     return redirect("/account") 
+
 # route for edit functionality, updating the attributes of an account in accounts
 # similar to our delete route, we want to the pass the 'id' value of that account on button click (see HTML) via the route
 @app.route("/edit_account/<int:id>", methods=["POST", "GET"])
@@ -80,9 +81,7 @@ def edit_accounts(id):
         if request.form.get("Edit_Account"):
             # grab user form inputs
             id = request.form["accountID"]
-    
             balance = request.form["balance"]
-
             query = "UPDATE accounts SET Accounts.account_id = %s, Accounts.balance = %s WHERE Accounts.account_id = %s"
             cur = mysql.connection.cursor()
             cur.execute(query, (balance, id))
@@ -109,28 +108,19 @@ def Customers():
     cur = mysql.connection.cursor()
     cur.execute(query)
     results = cur.fetchall()
+    print(results)
     return render_template("customer.j2", customers=results)
 
-@app.route("/delete_customer/<int:id>")
-def delete_customer(id):
-    # mySQL query to delete the person with our passed id
-    query = "DELETE FROM Customers WHERE customer_id = '%s';"
-    cur = mysql.connection.cursor()
-    cur.execute(query, (id,))
-    mysql.connection.commit()
-    # redirect back to people page
-    return redirect("/customer")
-
-
-@app.route("/edit_customer/<int:id>", methods=["POST", "GET"])
-def edit_customer(id):
+@app.route("/edit_customers/<int:id>", methods=["POST", "GET"])
+def edit_customers(id):
+    print("here")
     if request.method == "GET":
         query = "SELECT * FROM Customers WHERE customer_id = %s" % (id)
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
-        return render_template("edit_customer.j2", customers=data)
-
+        return render_template("edit_customer.j2", customer=data)
+    print("here")
     if request.method == "POST":
         if request.form.get("Edit_Customer"):
             customer_id = request.form["customerID"]
@@ -145,6 +135,17 @@ def edit_customer(id):
             mysql.connection.commit()
 
             return redirect("/customer")
+@app.route("/delete_customers/<int:id>")
+def delete_customer(id):
+    # mySQL query to delete the person with our passed id
+    query = "DELETE FROM Customers WHERE customer_id = '%s';"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (id,))
+    mysql.connection.commit()
+    # redirect back to people page
+    return redirect("/customer")
+
+
 
 # Cards page route
 
@@ -241,7 +242,7 @@ def branch(branch_id):
 # Listener
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 55233)) 
+    port = int(os.environ.get('PORT', 55235)) 
 
     
     app.run(port=port, debug=True) 

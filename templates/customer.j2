@@ -2,7 +2,6 @@
 <!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
 
 <!DOCTYPE html>
-<html>
 <link rel="stylesheet" href="/style.css">
 
 <head>
@@ -68,7 +67,6 @@
     <div id="browse">
         <caption>Customers</caption>
         <table border="1" cellpadding="5">
-        {% if customers %}
             <thead>
 
                 <tr>
@@ -92,12 +90,12 @@
                     {% for key in customer.keys() %}
                     <!-- Create a <td> element with the value of that key in it -->
                     <td>{{customer[key]}}</td>
+                    <td>{{customers.customer_id}}</td>
                     {% endfor %}
-                    <td><a href="edit_customer/{{customer.customer_id}}" class="btn btn-default">Edit</a></td>
-                    <td><a href="delete_customer/{{customer.customer_id}}" class="btn btn-default">Delete</a></td>
+                    <td><a href="edit_customers/{{customer[key]}}" class="btn btn-default">Edit</a></td>
+                    <td><a href="delete_customers/{{customer[key]}}" class="btn btn-default">Delete</a></td>
                 </tr>
                 {% endfor %}
-        {% endif %}
         </table>
         <p>&nbsp;</p>
     </div> <!-- browse -->
