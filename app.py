@@ -29,7 +29,7 @@ def Accounts():
     cur.execute(query1)
     results = cur.fetchall()
     cur.execute(query2)
-    return render_template("account.j2", Accounts=results)
+    return render_template("account.j2", accounts=results)
 # Transactions page route
 @app.route('/transaction/<int:id>', methods=["POST", "GET"])
 def Transactions(id):
@@ -48,6 +48,7 @@ def Customers():
     cur.execute(query)
     results = cur.fetchall()
     return render_template("customer.j2", customer=results)
+
 @app.route("/edit_customers/<int:id>", methods=["POST", "GET"])
 def edit_customers(id):
     if request.method == "GET":

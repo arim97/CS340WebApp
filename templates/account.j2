@@ -70,7 +70,7 @@
     <tr>
         <!-- Iterate through each key in the first entry to get the
         column name -->
-        {% for key in Accounts[0].keys() %}
+        {% for key in accounts[0].keys() %}
         <!-- Create a <th> tag with the key inside of it, this will be
         our header row -->
         <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
@@ -80,7 +80,7 @@
     <tbody>
 
     <!-- Now, iterate through every account in Accounts -->
-    {% for account in Accounts %}
+    {% for account in accounts %}
     <tr>
         <!-- Then iterate through every key in the current account dictionary -->
         {% for key in account.keys() %}
