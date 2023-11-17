@@ -193,7 +193,7 @@ def card(card_id):
     query = "SELECT * FROM Cards WHERE card_id = %s;"
     cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(card_id,))
     result = cursor.fetchone()
-    return render_template("card.j2", Cards=result)  # Render a specific template for individual patient
+    return render_template("card.j2", Cards=result)  # Render a specific template for individual card
 
 # Branches page route
 @app.route('/branches', methods=['GET', 'POST'])
@@ -239,7 +239,7 @@ def branch(branch_id):
     query = "SELECT * FROM Cards WHERE card_id = %s;"
     cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(branch_id,))
     result = cursor.fetchone()
-    return render_template("branch.j2", Branch=result)  # Render a specific template for individual patient
+    return render_template("branch.j2", Branch=result)  # Render a specific template for individual branch
 
 
 # Listener
