@@ -28,7 +28,7 @@ def Accounts():
     # Grab accounts data so we send it to our template to display
     if request.method == "GET":
         # mySQL query to grab all the accounts in accounts table
-        query = "SELECT account_id AS 'Account No.', balance AS Balance FROM Accounts"
+        query = "SELECT account_id as ID, balance FROM Accounts"
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
@@ -43,13 +43,13 @@ def Accounts():
         # fire off if user presses the Add Account button
         if request.form.get("Add_Account"):
             # grab user form inputs
+            id = request.form["AccountID"]
             balance = request.form["balance"]
-            query = "INSERT INTO accounts (balance) VALUES (%s)"
+            query = "INSERT INTO Accounts (account_id , balance) VALUES (%s, %s)"
             cur = mysql.connection.cursor()
-            cur.execute(query, (balance))
+            cur.execute(query, (id, balance))
             mysql.connection.commit()
-
-            # redirect back to accounts page
+            # redirect back to account page
             return redirect("/account")
 
 
@@ -58,7 +58,7 @@ def Accounts():
 @app.route("/delete_account/<int:id>")
 def delete_account(id):
     # mySQL query to delete the account with our passed id
-    query = "DELETE FROM accounts WHERE id = %s;"
+    query = "DELETE FROM Accounts WHERE account_id = %s;"
     cur = mysql.connection.cursor()
     cur.execute(query, (id,))
     mysql.connection.commit()
@@ -75,7 +75,6 @@ def edit_accounts(id):
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
-
         # render edit_accounts page passing our query data to the edit_accounts template
         return render_template("edit_account.j2", accounts=data)
 
@@ -85,12 +84,11 @@ def edit_accounts(id):
             # grab user form inputs
             id = request.form["accountID"]
             balance = request.form["balance"]
-            query = "UPDATE accounts SET Accounts.account_id = %s, Accounts.balance = %s WHERE Accounts.account_id = %s"
+            query = "UPDATE Accounts SET Accounts.account_id = %s, Accounts.balance = %s WHERE Accounts.account_id = %s"
             cur = mysql.connection.cursor()
-            cur.execute(query, (balance, id))
+            cur.execute(query, (id, balance, id))
             mysql.connection.commit()
-
-            # redirect back to accounts page after we execute the update query
+            # redirect back to account page after we execute the update query
             return redirect("/account")
 
 
@@ -107,37 +105,52 @@ def Transactions():
 # Customers page route
 @app.route('/customer', methods=["POST", "GET"])
 def Customers():
-    query = "SELECT customer_id AS ID, name as Name, address AS Address, phone AS Phone, date_of_birth as DOB FROM Customers;"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    results = cur.fetchall()
-    print(results)
-    return render_template("customer.j2", customers=results)
+    if request.method == "GET":
+        query = "SELECT customer_id AS ID, name as Name, address AS Address, phone AS Phone, date_of_birth as DOB FROM Customers;"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        results = cur.fetchall()
+        print(results)
+        return render_template("customer.j2", customers=results)
+
+# Separate out the request methods, in this case this is for a POST
+# insert an customer into the Customers entity
+    if request.method == "POST":
+        # fire off if user presses the Add Customer button
+        if request.form.get("Add_Customer"):
+            # grab user form inputs
+            name = request.form["name"]
+            address = request.form["address"]
+            phone = request.form["phone"]
+            dob = request.form["dob"]
+            query = "INSERT INTO Customers (name, address, phone, date_of_birth ) VALUES (%s, %s, %s, %s)"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (name, address, phone, dob))
+            mysql.connection.commit()
+            # redirect back to customer page
+            return redirect("/customer")
+
 
 @app.route("/edit_customers/<int:id>", methods=["POST", "GET"])
 def edit_customers(id):
-    print("here")
     if request.method == "GET":
         query = "SELECT * FROM Customers WHERE customer_id = %s" % (id)
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
-        return render_template("edit_customer.j2", customer=data)
-    print("here")
+        return render_template("edit_customers.j2", customer=data)
     if request.method == "POST":
         if request.form.get("Edit_Customer"):
-            customer_id = request.form["customerID"]
             name = request.form["name"]
             address = request.form["address"]
             phone = request.form["phone"]
             date_of_birth = request.form["date_of_birth"]
-
             query = "UPDATE Customers SET name = %s, address = %s, phone = %s, date_of_birth = %s WHERE customer_id = %s"
             cur = mysql.connection.cursor()
-            cur.execute(query, (name, address, phone, date_of_birth, customer_id))
+            cur.execute(query, (name, address, phone, date_of_birth, id))
             mysql.connection.commit()
-
             return redirect("/customer")
+        
 @app.route("/delete_customers/<int:id>")
 def delete_customer(id):
     # mySQL query to delete the person with our passed id
@@ -182,18 +195,17 @@ def card(card_id):
         account_id = request.form.get('account_id')
         scc = request.form.get('security_code')
         exp_date = request.form.get('exp_date')
-        
         query = "UPDATE Cards SET account_id = %s,security_code = %s, exp_date = %s WHERE card_id = %s;"
         db.execute_query(db_connection=db_connection, query=query, query_params=(account_id, scc, exp_date, card_id))
-
+        return redirect('/cards')
     elif request.method == 'DELETE':
         query = "DELETE FROM Cards WHERE card_id = %s;"
         db.execute_query(db_connection=db_connection, query=query, query_params=(card_id,))
-        
+        return redirect('/cards')
     query = "SELECT * FROM Cards WHERE card_id = %s;"
     cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(card_id,))
     result = cursor.fetchone()
-    return render_template("card.j2", Cards=result)  # Render a specific template for individual patient
+    return render_template("card.j2", Cards=result)  # Render a specific template for individual card
 
 # Branches page route
 @app.route('/branches', methods=['GET', 'POST'])
@@ -239,7 +251,7 @@ def branch(branch_id):
     query = "SELECT * FROM Cards WHERE card_id = %s;"
     cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(branch_id,))
     result = cursor.fetchone()
-    return render_template("branch.j2", Branch=result)  # Render a specific template for individual patient
+    return render_template("branch.j2", Branch=result)  # Render a specific template for individual branch
 
 
 # Listener

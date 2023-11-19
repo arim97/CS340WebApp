@@ -4,7 +4,7 @@
     <html>
     <link rel="stylesheet" href="/style.css">
     <head>
-	<title>People</title>
+	<title>Accounts</title>
 	<link href="style.css" rel="stylesheet" type="text/css" />
 
 
@@ -33,13 +33,11 @@
     {% for account in accounts %}
     <tr>
         <!-- Then iterate through every key in the current account dictionary -->
-        {% for key in account.keys() %}
-        <!-- Create a <td> element with the value of that key in it -->
-        <td>{{account[key]}}</td>
-        {% endfor %}
+        <td>{{account.ID}}</td>
+        <td>${{account.balance}}</td>
         <td><a href="/transaction" class="btn btn-default">Transactions</a></td>
-        <td><a href="edit_account/{{account.account_id}}" class="btn btn-default">Edit</a></td>
-		<td><a href="delete_account/{{account.account_id}}" class="btn btn-default">Delete</a></td>
+        <td><a href="edit_account/{{account.ID}}" class="btn btn-default">Edit</a></td>
+		<td><a href="delete_account/{{account.ID}}" class="btn btn-default">Delete</a></td>
     </tr>
     {% endfor %}
     </table>
@@ -49,13 +47,12 @@
 
 	<div id="insert">
     <!-- form to INSERT new data into Accounts-->
-    <form id="Add_Account" action="/accounts" method="POST">
+    <form id="Add_Account" action="/account" method="POST">
         <legend><strong>Add Account</strong></legend>
         <fieldset>
             <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-            <label for="name">Account No:</label>
-            <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
-
+            <label for="AccountID"> ID </label>
+            <input type="text" class="form-control" id="AccountID" name="AccountID" pattern="[0-9]{1,}" placeholder="" required>
             <label for="balance">Account Balance:</label>
             <input type="text" class="form-control" id="balance" name="balance" pattern="[0-9]{1,}" placeholder="" required>
         </fieldset>
@@ -64,21 +61,23 @@
         <input type="submit" value="Add Account" name="Add_Account" class="btn btn-primary" style="margin:.5rem;">
         <input class="btn" type="button" value="Cancel" onClick="browseAccounts()"> 
     </form>
+
 </div><!--insert-->
-
-	<div id="edit">
+<div id="edit">
     <!-- form to edit data in Accounts-->
-    <form id="editAccount" action="/edit_accounts/{{accounts[0].id}}" method="POST">
-        <legend><strong>Edit Account</strong></legend>
+    <form id="editAccount" action="/edit_account/{{accounts[0].ID}}" method="POST">
+        <legend><strong>Edit Balance</strong></legend>
         <fieldset>
-            <input type="hidden" value="{{accounts[0].id}}" class="form-control" id="accountID" name="accountID" required>
-            <label for="type">Account Type:</label>
-
-            <input type="text" class="form-control" id="type" name="type" pattern="[A-Za-z0-9]{1,}" placeholder="{{accounts[0].type}}" required>
-            <label for="balance">Account Balance:</label>
-
-            <input type="text" class="form-control" id="balance" name="balance" pattern="[0-9]{1,}" placeholder="{{accounts[0].balance}}" required> 
+            <label for="type">ID</label>
+            <select class="form-control" id="accountID" name="accountID" placeholder="" required>
+                {% for account in accounts %}
+                    <option>{{account.ID}}</option>
+                {% endfor %}
+			</select>
+            <label for="balance">New Balance:</label>
+            <input type="text" class="form-control" id="balance" name="balance" pattern="[0-9]{1,}" required> 
         </fieldset>
+        <input class="btn" type="submit" value="Edit Balance" name="Edit_Account">
         <input class="btn" type="button" value="Cancel" onClick="browseAccounts()" style="margin:.5rem;"> 
     </form>
 </div><!--edit-->
