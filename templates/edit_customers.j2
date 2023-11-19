@@ -38,22 +38,24 @@
 
         <div id="edit">
             <!-- form to edit data in Customers-->
-            <form id="editCustomer" action="/edit_customers/{{customer[0].id}}" method="post">
+            <form type="hidden" id="editCustomer" action="/edit_customers/{{customer[0].customer_id}}" method="post">
                 <legend><strong>Edit Customer</strong></legend>
                 <fieldset>
                     <!-- We can preset form inputs to match attributes currently stored for 'id' of customer to be updated via value= and accessing our passed customer tuple -->
                     <!-- Create hidden form input to store the passed 'id' of the customer we are editing so we can access it easily in our 'POST' method in our app.py -->
-                    <input type="hidden" value="{{customer[0].id}}" class="form-control" id="customerID" name="customerID" required>
+                    <input type="hidden" value="{{customer[0].customer_id}}" class="form-control" id="customerID" name="customerID" required>
+                    
                     <label for="name">Customer Name:</label>
-
-                    <input type="text" value="{{customer[0].name}}" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" required>
-                    <label for="email">Customer Email:</label>
-
-                    <input type="text" value="{{customer[0].email}}" class="form-control" id="email" name="email" pattern="[A-Za-z0-9]{1,}" required>
+                    <input type="text" value="{{customer[0].name}}" class="form-control" id="name" name="name" pattern="{1,}" required>
+                    
+                    <label for="email">Customer Address:</label>
+                    <input type="text" value="{{customer[0].address}}" class="form-control" id="address" name="address" pattern="{1,}" required>
+                    
                     <label for="phone">Customer Phone:</label>
+                    <input type="text" value="{{customer[0].phone}}" class="form-control" id="phone" name="phone" pattern="{1,}" required> 
 
-                    <input type="text" value="{{customer[0].phone}}" class="form-control" id="phone" name="phone" pattern="[0-9]{1,}" required> 
-                
+                     <label for="date_of_birth">Date of Birth:</label>
+                    <input type="date" value="{{customer[0].date_of_birth}}" class="form-control" id="date_of_birth" name="date_of_birth" required>
                 </fieldset>
                 <input type="submit" value="Edit Customer" name="Edit_Customer" class="btn btn-primary" style="margin:.5rem;">
                 <a href='/customers'><input class="btn" type="button" value="cancel"></a>
