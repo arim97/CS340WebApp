@@ -233,51 +233,76 @@ def edit_card(card_id):
             return redirect("/cards")
 
 # Branches page route
-@app.route('/branches', methods=['GET', 'POST'])
-def branches():
-    if request.method == 'POST':
-        branch_id = request.form.get('branch_id') 
-        branch_name = request.form.get('branch_name')
-        address = request.form.get('address')
-        phone = request.form.get('phone')
-        manager = request.form.get('manager')
-        
-        query = "INSERT INTO Branches (branch_id, branch_name, address, phone, manager) VALUES (%s, %s, %s, %s, %s);"
-        db.execute_query(db_connection=db_connection, query=query, query_params=(branch_id, branch_name, address, phone, manager))
-        return redirect('/branches')
+@app.route('/branches',  methods=["POST", "GET"])
+def Branches():
+    # Grab accounts data so we send it to our template to display
+    if request.method == "GET":
+        # mySQL query to grab all the accounts in accounts table
+        query = "SELECT * FROM Branches"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        data = cur.fetchall()
 
-    query = "SELECT * FROM Branches;"
-    cursor = db.execute_query(db_connection=db_connection, query=query)
-    results = cursor.fetchall()
-    return render_template("branches.j2", Branches=results)
+        # render edit_accounts page passing our query data to the edit_accounts template
+        return render_template("branches.j2", Branches=data)
+    
 
-@app.route('/delete_branch/<int:branch_id>', methods=['GET', 'POST'])
-def delete_branch(branch_id): 
+    # Separate out the request methods, in this case this is for a POST
+    # insert an account into the accounts entity
+    if request.method == "POST":
+        # fire off if user presses the Add Account button
+        if request.form.get("Add_Branch"):
+            # grab user form inputs
+            branch_id = request.form["branch_id"]
+            branch_name= request.form["branch_name"]
+            address = request.form["address"]
+            phone = request.form["phone"]
+            manager = request.form["manager"]
+
+            query = "INSERT INTO Branches (branch_id , branch_name, address, phone, manager) VALUES (%s, %s, %s, %s, %s)"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (branch_id , branch_name, address, phone, manager))
+            mysql.connection.commit()
+            # redirect back to account page
+            return redirect("/branches")
+
+
+@app.route("/delete_branch/<int:branch_id>")
+def delete_branch(branch_id):
     query = "DELETE FROM Branches WHERE branch_id = %s;"
-    cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(branch_id,))
-    return redirect('/branches')
+    cur = mysql.connection.cursor()
+    cur.execute(query, (branch_id,))
+    mysql.connection.commit()
+    # redirect back to accounts page
+    return redirect("/branches") 
 
-@app.route('/branches/<int:branch_id>', methods=['GET', 'POST', 'DELETE'])
-def branch(branch_id):
-    if request.method == 'POST':
-        branch_id = request.form.get('branch_id') 
-        branch_name = request.form.get('branch_name')
-        address = request.form.get('address')
-        phone = request.form.get('phone')
-        manager = request.form.get('manager')
-        
-        query = "UPDATE Branches SET branch_name = %s,address = %s, phone = %s, manager = %s WHERE branch_id = %s;"
-        db.execute_query(db_connection=db_connection, query=query, query_params=(branch_name, address, phone, manager, branch_id))
+@app.route("/edit_branch/<int:branch_id>", methods=["POST", "GET"])
+def edit_branch(branch_id):
+    if request.method == "GET":
+        # mySQL query to grab the info of the account with our passed id
+        query = "SELECT * FROM Branches WHERE branch_id = %s" % (branch_id)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        data = cur.fetchall()
+        # render edit_accounts page passing our query data to the edit_accounts template
+        return render_template("branch.j2", Branches=data)
 
-    elif request.method == 'DELETE':
-        query = "DELETE FROM Branches WHERE branch_id = %s;"
-        db.execute_query(db_connection=db_connection, query=query, query_params=(branch_id,))
-        
-    query = "SELECT * FROM Cards WHERE card_id = %s;"
-    cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(branch_id,))
-    result = cursor.fetchone()
-    return render_template("branch.j2", Branch=result)  # Render a specific template for individual branch
+    if request.method == "POST":
+        # fire off if user clicks the 'Edit Account' button
+        if request.form.get("Edit_Branch"):
+            # grab user form inputs
+            branch_id = request.form["branch_id"]
+            branch_name= request.form["branch_name"]
+            address = request.form["address"]
+            phone = request.form["phone"]
+            manager = request.form["manager"]
 
+            query = "UPDATE Branches SET Branches.branch_id = %s, Branches.branch_name = %s, Branches.address = %s, Branches.phone = %s, Branches.manager = %s WHERE Branches.branch_id = %s"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (branch_id, branch_name, address, phone, manager, branch_id))
+            mysql.connection.commit()
+            # redirect back to account page after we execute the update query
+            return redirect("/branches")
 
 # Listener
 
