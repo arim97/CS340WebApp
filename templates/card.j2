@@ -1,28 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-</head>
-<body>
-<div class="tabs">
-        <a href="/" class="tab">Home</a> 
-    </div>
+<html>
 
-    <h2>Update Card</h2>
-    <form method="POST">
-        <label for="card_id">card_id:</label>
-        <input type="number" id="card_id" name="card_id" value="{{ Cards.card_id }}">
-        <br>
-        <label for="account_id">account_id:</label>
-        <input type="number" id="account_id" name="account_id" value="{{ Cards.account_id }}">
-        <br>
-        <label for="security_code">scc:</label>
-        <input type="number" id="security_code" name="security_code" value="{{ Cards.security_code }}">
-        <br>
-        <label for="exp_date">exp_date:</label>
-        <input type="date" id="exp_date" name="exp_date" value="{{ Cards.exp_date }}">
-        <br>
-        <input type="submit" value="Update Card">
-    </form>
+<head>
+    <title>Edit Account</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div>
+        <table border="1" cellpadding="5"> 
+            <caption> Editing Cards: </caption>
+            <!-- Access accounts tuple passed from app.py -->
+            {% if Cards %}
+                <thead>
+                    <tr>
+                        <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in Cards[0].keys() %}
+                        <!-- Create a <th> tag with the key inside of it, this will be our header row -->
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+                <tbody>
+                    <!-- Now, iterate through every item in accounts -->
+                    {% for item in Cards %}
+                    <tr>
+                        <!-- Then iterate through every key in the current item dictionary -->
+                        {% for key in item.keys() %}
+                        <!-- Create a <td> element with the value of that key in it -->
+                        <td>{{item[key]}}</td> {% endfor %} 
+                    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>
+
+        <div id="edit">
+            <!-- form to edit data in Accounts-->
+            <form id="editCard" action="/edit_card/{{Cards[0].card_id}}" method="post">
+                <legend><strong>Edit Account</strong></legend>
+                <fieldset>
+                    <!-- We can preset form inputs to match attributes currently stored for 'id' of account to be updated via value= and accessing our passed accounts tuple -->
+                    <!-- Create hidden form input to store the passed 'id' of the account we are editing so we can access it easily in our 'POST' method in our app.py -->
+                    <input type="hidden" value="{{Cards[0].card_id}}" class="form-control" id="card_id" name="card_id" required>
+                    
+    
+                    <label for="security_code">Security Code:</label>
+                    <input type="number" value="{{Cards[0].security_code}}" class="form-control" id="security_code" name="security_code"required> 
+
+                    <label for="exp_date">exp_date:</label>
+                    <input type="date" value="{{Cards[0].exp_date}}" class="form-control" id="exp_date" name="exp_date"required> 
+                
+                </fieldset>
+                <input type="submit" value="Edit Card" name="Edit_Card" class="btn btn-primary" style="margin:.5rem;">
+                <a href='/cards'><input class="btn" type="button" value="Cancel"></a>
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>
