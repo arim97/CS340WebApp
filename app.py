@@ -4,15 +4,16 @@ from flask_mysqldb import MySQL
 from flask import request
 import database.db_connector as db
 import os
-db_connection = db.connect_to_database()
-app = Flask(__name__,template_folder='templates')
+
+
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_arim'
-app.config['MYSQL_PASSWORD'] = 'DlkI86YvGvtb' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_arim'
+app.config['MYSQL_USER'] = 'cs340_tranhoan'
+app.config['MYSQL_PASSWORD'] = '32PdzxpcR0gt' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_tranhoan'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
+
 mysql = MySQL(app)
 
 # Routes 
@@ -165,47 +166,71 @@ def delete_customer(id):
 
 # Cards page route
 
-@app.route('/cards', methods=['GET', 'POST'])
-def cards():
-    if request.method == 'POST':
-        card_id = request.form.get('card_id') 
-        account_id = request.form.get('account_id')
-        scc = request.form.get('security_code')
-        exp_date = request.form.get('exp_date')
-        
-        query = "INSERT INTO Cards (card_id, account_id, security_code, exp_date) VALUES (%s, %s, %s, %s);"
-        db.execute_query(db_connection=db_connection, query=query, query_params=(card_id, account_id, scc, exp_date))
-        return redirect('/cards')
+@app.route('/cards',  methods=["POST", "GET"])
+def Cards():
+    # Grab accounts data so we send it to our template to display
+    if request.method == "GET":
+        # mySQL query to grab all the accounts in accounts table
+        query = "SELECT * FROM Cards"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        data = cur.fetchall()
 
-    query = "SELECT * FROM Cards;"
-    cursor = db.execute_query(db_connection=db_connection, query=query)
-    results = cursor.fetchall()
-    return render_template("cards.j2", Cards=results)
+        # render edit_accounts page passing our query data to the edit_accounts template
+        return render_template("cards.j2", Cards=data)
+    
 
-@app.route('/delete_card/<int:card_id>', methods=['GET', 'POST'])
-def delete_card(card_id): 
+    # Separate out the request methods, in this case this is for a POST
+    # insert an account into the accounts entity
+    if request.method == "POST":
+        # fire off if user presses the Add Account button
+        if request.form.get("Add_Card"):
+            # grab user form inputs
+            card_id = request.form["card_id"]
+            account_id= request.form["account_id"]
+            scc = request.form["security_code"]
+            exp_date = request.form["exp_date"]
+            query = "INSERT INTO Cards (card_id , account_id, security_code, exp_date) VALUES (%s, %s, %s, %s)"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (card_id, account_id, scc, exp_date))
+            mysql.connection.commit()
+            # redirect back to account page
+            return redirect("/cards")
+
+
+@app.route("/delete_card/<int:card_id>")
+def delete_card(card_id):
     query = "DELETE FROM Cards WHERE card_id = %s;"
-    cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(card_id,))
-    return redirect('/cards')
+    cur = mysql.connection.cursor()
+    cur.execute(query, (card_id,))
+    mysql.connection.commit()
+    # redirect back to accounts page
+    return redirect("/cards") 
 
-@app.route('/cards/<int:card_id>', methods=['GET', 'POST', 'DELETE'])
-def card(card_id):
-    if request.method == 'POST':
-        card_id = request.form.get('card_id') 
-        account_id = request.form.get('account_id')
-        scc = request.form.get('security_code')
-        exp_date = request.form.get('exp_date')
-        query = "UPDATE Cards SET account_id = %s,security_code = %s, exp_date = %s WHERE card_id = %s;"
-        db.execute_query(db_connection=db_connection, query=query, query_params=(account_id, scc, exp_date, card_id))
-        return redirect('/cards')
-    elif request.method == 'DELETE':
-        query = "DELETE FROM Cards WHERE card_id = %s;"
-        db.execute_query(db_connection=db_connection, query=query, query_params=(card_id,))
-        return redirect('/cards')
-    query = "SELECT * FROM Cards WHERE card_id = %s;"
-    cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(card_id,))
-    result = cursor.fetchone()
-    return render_template("card.j2", Cards=result)  # Render a specific template for individual card
+@app.route("/edit_card/<int:card_id>", methods=["POST", "GET"])
+def edit_card(card_id):
+    if request.method == "GET":
+        # mySQL query to grab the info of the account with our passed id
+        query = "SELECT * FROM Cards WHERE card_id = %s" % (card_id)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        data = cur.fetchall()
+        # render edit_accounts page passing our query data to the edit_accounts template
+        return render_template("card.j2", Cards=data)
+
+    if request.method == "POST":
+        # fire off if user clicks the 'Edit Account' button
+        if request.form.get("Edit_Card"):
+            # grab user form inputs
+            card_id = request.form["card_id"]
+            scc = request.form["security_code"]
+            exp_date = request.form["exp_date"]
+            query = "UPDATE Cards SET Cards.card_id = %s, Cards.security_code = %s, Cards.exp_date = %s WHERE Cards.card_id = %s"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (card_id, scc, exp_date, card_id))
+            mysql.connection.commit()
+            # redirect back to account page after we execute the update query
+            return redirect("/cards")
 
 # Branches page route
 @app.route('/branches', methods=['GET', 'POST'])
@@ -257,7 +282,7 @@ def branch(branch_id):
 # Listener
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 55235)) 
+    port = int(os.environ.get('PORT', 91115)) 
 
     
     app.run(port=port, debug=True) 
