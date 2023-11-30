@@ -1,31 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-</head>
-<body>
-<div class="tabs">
-        <a href="/" class="tab">Home</a> 
-    </div>
+<html>
 
-    <h2>Update Branch</h2>
-    <form method="POST">
-        <label for="branch_id">branch_id:</label>
-        <input type="number" id="branch_id" name="branch_id" value="{{ Branch.branch_id }}">
-        <br>
-        <label for="branch_name">branch_name:</label>
-        <input type="text" id="branch_name" name="branch_name" value="{{ Branch.branch_name }}">
-        <br>
-        <label for="address">address:</label>
-        <input type="text" id="address" name="address" value="{{ Branch.address }}">
-        <br>
-        <label for="phone">phone:</label>
-        <input type="text" id="phone" name="phone" value="{{ Branch.phone }}">
-        <br>
-        <label for="manager">manager:</label>
-        <input type="text" id="manager" name="manager" value="{{ Branch.manager }}">
-        <br>
-        <input type="submit" value="Update Branch" name="Edit_Branch">
-    </form>
+<head>
+    <title>Edit Account</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div>
+        <table border="1" cellpadding="5"> 
+            <caption> Editing Branch: </caption>
+            <!-- Access accounts tuple passed from app.py -->
+            {% if Branches %}
+                <thead>
+                    <tr>
+                        <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in Branches[0].keys() %}
+                        <!-- Create a <th> tag with the key inside of it, this will be our header row -->
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+                <tbody>
+                    <!-- Now, iterate through every item in accounts -->
+                    {% for item in Branches %}
+                    <tr>
+                        <!-- Then iterate through every key in the current item dictionary -->
+                        {% for key in item.keys() %}
+                        <!-- Create a <td> element with the value of that key in it -->
+                        <td>{{item[key]}}</td> {% endfor %} 
+                    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>
+
+        <div id="edit">
+            <!-- form to edit data in Accounts-->
+            <form id="editBranch" action="/edit_branch/{{Branches[0].branch_id}}" method="post">
+                <legend><strong>Edit Branch</strong></legend>
+                <fieldset>
+                    <!-- We can preset form inputs to match attributes currently stored for 'id' of account to be updated via value= and accessing our passed accounts tuple -->
+                    <!-- Create hidden form input to store the passed 'id' of the account we are editing so we can access it easily in our 'POST' method in our app.py -->
+                    <input type="hidden" value="{{Branches[0].branch_id}}" class="form-control" id="branch_id" name="branch_id" required>
+                    
+    
+                    <label for="branch_name">Name:</label>
+                    <input type="text" value="{{Branches[0].branch_name}}" class="form-control" id="branch_name" name="branch_name"required> 
+
+                    <label for="phone">exp_date:</label>
+                    <input type="text" value="{{Branches[0].phone}}" class="form-control" id="phone" name="phone"required> 
+
+                    <label for="address">exp_date:</label>
+                    <input type="text" value="{{Branches[0].address}}" class="form-control" id="address" name="address"required> 
+
+                    <label for="manager">exp_date:</label>
+                    <input type="text" value="{{Branches[0].manager}}" class="form-control" id="manager" name="manager"required> 
+                
+                </fieldset>
+                <input type="submit" value="Edit Branch" name="Edit_Branch" class="btn btn-primary" style="margin:.5rem;">
+                <a href='/cards'><input class="btn" type="button" value="Cancel"></a>
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>
