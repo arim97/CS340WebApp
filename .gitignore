@@ -1,2 +1,5 @@
 /.vscode
 /.venv
+/CS340WebApp/database/__pycache__
+/CS340WebApp/__pycache__
+
