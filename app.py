@@ -131,7 +131,7 @@ def Customers():
             # redirect back to customer page
             return redirect("/customer")
 
-
+# Edit customer functionality
 @app.route("/edit_customers/<int:id>", methods=["POST", "GET"])
 def edit_customers(id):
     if request.method == "GET":
@@ -152,6 +152,7 @@ def edit_customers(id):
             mysql.connection.commit()
             return redirect("/customer")
         
+# Delete customer functionality       
 @app.route("/delete_customers/<int:id>")
 def delete_customer(id):
     # mySQL query to delete the person with our passed id
@@ -165,23 +166,22 @@ def delete_customer(id):
 
 
 # Cards page route
-
 @app.route('/cards',  methods=["POST", "GET"])
 def Cards():
-    # Grab accounts data so we send it to our template to display
+    # Grab cards data so we send it to our template to display
     if request.method == "GET":
-        # mySQL query to grab all the accounts in accounts table
+        # mySQL query to grab all the cards in cards table
         query = "SELECT * FROM Cards"
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
 
-        # render edit_accounts page passing our query data to the edit_accounts template
+        # render cards page passing our query data to the edit_cards template
         return render_template("cards.j2", Cards=data)
     
 
     # Separate out the request methods, in this case this is for a POST
-    # insert an account into the accounts entity
+    # insert a card into the cards entity
     if request.method == "POST":
         # fire off if user presses the Add Account button
         if request.form.get("Add_Card"):
@@ -197,16 +197,17 @@ def Cards():
             # redirect back to account page
             return redirect("/cards")
 
-
+# Delete card functionality
 @app.route("/delete_card/<int:card_id>")
 def delete_card(card_id):
     query = "DELETE FROM Cards WHERE card_id = %s;"
     cur = mysql.connection.cursor()
     cur.execute(query, (card_id,))
     mysql.connection.commit()
-    # redirect back to accounts page
+    # redirect back to cards page
     return redirect("/cards") 
 
+# Editing card functionality
 @app.route("/edit_card/<int:card_id>", methods=["POST", "GET"])
 def edit_card(card_id):
     if request.method == "GET":
@@ -215,7 +216,7 @@ def edit_card(card_id):
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
-        # render edit_accounts page passing our query data to the edit_accounts template
+        # render main card page passing our query data to the edit_cards template
         return render_template("card.j2", Cards=data)
 
     if request.method == "POST":
@@ -235,20 +236,20 @@ def edit_card(card_id):
 # Branches page route
 @app.route('/branches',  methods=["POST", "GET"])
 def Branches():
-    # Grab accounts data so we send it to our template to display
+    # Grab branches data so we send it to our template to display
     if request.method == "GET":
-        # mySQL query to grab all the accounts in accounts table
+        # mySQL query to grab all the branches in branches table
         query = "SELECT * FROM Branches"
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
 
-        # render edit_accounts page passing our query data to the edit_accounts template
+        # render edit_branches page passing our query data to the branches template
         return render_template("branches.j2", Branches=data)
     
 
     # Separate out the request methods, in this case this is for a POST
-    # insert an account into the accounts entity
+    # insert an account into the branches entity
     if request.method == "POST":
         # fire off if user presses the Add Account button
         if request.form.get("Add_Branch"):
@@ -266,16 +267,17 @@ def Branches():
             # redirect back to account page
             return redirect("/branches")
 
-
+# Delete branch functionality
 @app.route("/delete_branch/<int:branch_id>")
 def delete_branch(branch_id):
     query = "DELETE FROM Branches WHERE branch_id = %s;"
     cur = mysql.connection.cursor()
     cur.execute(query, (branch_id,))
     mysql.connection.commit()
-    # redirect back to accounts page
+    # redirect back to branches page
     return redirect("/branches") 
 
+# Edit branch functionality
 @app.route("/edit_branch/<int:branch_id>", methods=["POST", "GET"])
 def edit_branch(branch_id):
     if request.method == "GET":
@@ -284,11 +286,11 @@ def edit_branch(branch_id):
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
-        # render edit_accounts page passing our query data to the edit_accounts template
+        # render edit_branches page passing our query data to the branches template
         return render_template("branch.j2", Branches=data)
 
     if request.method == "POST":
-        # fire off if user clicks the 'Edit Account' button
+        # fire off if user clicks the 'Edit Branch' button
         if request.form.get("Edit_Branch"):
             # grab user form inputs
             branch_id = request.form["branch_id"]
@@ -301,7 +303,7 @@ def edit_branch(branch_id):
             cur = mysql.connection.cursor()
             cur.execute(query, (branch_id, branch_name, address, phone, manager, branch_id))
             mysql.connection.commit()
-            # redirect back to account page after we execute the update query
+            # redirect back to branch page after we execute the update query
             return redirect("/branches")
 
 # Listener
