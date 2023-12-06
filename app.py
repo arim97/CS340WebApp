@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
 app.config['MYSQL_USER'] = 'cs340_arim'
-app.config['MYSQL_PASSWORD'] = 'DlkI86YvGvtb' #last 4 of onid
+app.config['MYSQL_PASSWORD'] = 'DlkI86YvGvtb'
 app.config['MYSQL_DB'] = 'cs340_arim'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
