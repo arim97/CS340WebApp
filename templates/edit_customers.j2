@@ -2,7 +2,7 @@
 
 <head>
     <title>Edit Customer</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
@@ -38,7 +38,7 @@
 
         <div id="edit">
             <!-- form to edit data in Customers-->
-            <form type="hidden" id="editCustomer" action="/edit_customers/{{customer[0].customer_id}}" method="post">
+            <form id="editCustomer" action="/edit_customers/{{customer[0].customer_id}}" method="post">
                 <legend><strong>Edit Customer</strong></legend>
                 <fieldset>
                     <!-- We can preset form inputs to match attributes currently stored for 'id' of customer to be updated via value= and accessing our passed customer tuple -->
