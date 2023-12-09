@@ -1,5 +1,5 @@
 <!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
- 
+
  <link rel="stylesheet" href="/static/css/style.css">
  
  <caption>Transactions</caption>
@@ -10,7 +10,6 @@
         <!-- Iterate through each key in the first entry to get the
         column name -->
         {% for key in Transactions[0].keys() %}
-
         <!-- Create a <th> tag with the key inside of it, this will be
         our header row -->
         <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
@@ -65,3 +64,19 @@
 			<input type="submit" value="Add Transaction" name="Add_Transaction" class="btn btn-primary" style="margin:.5rem;">
 			<input class="btn" type="button" value="Cancel" onClick="browseTransaction()"> 
         </form>
+        <table border="1" cellpadding="5">
+    <thead>
+    
+    <tr>
+        <th>Name</th>
+    </tr>
+    <tbody>
+
+    <!-- Now, iterate through every customer in Customers-->
+    {% for customer in Customers %}
+    <tr>
+        <td>{{customer.name}}</td>
+		<td><a href="remove_from_acc/{{customer.id}}" class="btn btn-default">Delete</a></td>
+    </tr>
+    {% endfor %}
+    </table>

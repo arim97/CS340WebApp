@@ -32,9 +32,8 @@
     {% for account in accounts %}
     <tr>
         <!-- Then iterate through every key in the current account dictionary -->
-        <td>{{account.ID}}</td>
+        <td><a href="/transaction/{{account.ID}}" class="btn btn-default">{{account.ID}}</a></td>
         <td>${{account.balance}}</td>
-        <td><a href="/transaction" class="btn btn-default">Transactions</a></td>
         <td><a href="edit_account/{{account.ID}}" class="btn btn-default">Edit</a></td>
 		<td><a href="delete_account/{{account.ID}}" class="btn btn-default">Delete</a></td>
     </tr>

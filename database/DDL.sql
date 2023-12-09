@@ -107,7 +107,7 @@ CREATE TABLE `In_Account` (
 );
 
 --
--- Table structure for table go_to``
+-- Table structure for table goes_to``
 --
 -- Holds information for which branch serves which customer
 DROP TABLE IF EXISTS `Goes_to`;
@@ -115,7 +115,7 @@ DROP TABLE IF EXISTS `Goes_to`;
 CREATE TABLE `Goes_to` (
     branch_id INT NOT NULL,
     customer_id INT NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ON UPDATE CASCADE ,
     FOREIGN KEY (branch_id) REFERENCES Branches(branch_id) ON DELETE CASCADE ON UPDATE CASCADE
   
 );
@@ -211,6 +211,20 @@ VALUES
 (03, 4321456),
 (01, 3526145),
 (02, 1234567);
+
+-- Inserting data into Goes_to
+-- Which Customers use which branch
+INSERT INTO Goes_to
+(
+    customer_id,
+    branch_id
+)
+VALUES
+(04, 01),
+(03, 01),
+(03, 02),
+(01, 01),
+(02, 03);
 
 
 

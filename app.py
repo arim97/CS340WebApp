@@ -1,19 +1,21 @@
-
+# Code based on CS340 Flask starter app
+# 
 from flask import Flask, render_template, json, redirect
 from flask_mysqldb import MySQL
 from flask import request
-import database.db_connector as db
 import os
 
 
 app = Flask(__name__)
-
+# Setting database credentials - remember to sanitize!
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
 app.config['MYSQL_USER'] = 'cs340_arim'
 app.config['MYSQL_PASSWORD'] = 'DlkI86YvGvtb'
 app.config['MYSQL_DB'] = 'cs340_arim'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
+# Connection object
+# Tells the program what database we are using, will be passed with every query
 mysql = MySQL(app)
 
 # Routes 
@@ -30,15 +32,15 @@ def Accounts():
     if request.method == "GET":
         # mySQL query to grab all the accounts in accounts table
         query = "SELECT account_id as ID, balance FROM Accounts"
+        # Create a cursor object to process query data and execute query
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
-
         # render edit_accounts page passing our query data to the edit_accounts template
         return render_template("account.j2", accounts=data)
     
 
-    # Separate out the request methods, in this case this is for a POST
+    
     # insert an account into the accounts entity
     if request.method == "POST":
         # fire off if user presses the Add Account button
@@ -94,14 +96,24 @@ def edit_accounts(id):
 
 
 # Transactions page route
-@app.route('/transaction')
-def Transactions():
-    #query1 = "SELECT * FROM Transactions WHERE sender_id = %s OR destination_id = %s;"
-    query1 = "SELECT * FROM Transactions;"
-    cur = mysql.connection.cursor()
-    cur.execute(query1)
-    results = cur.fetchall()
-    return render_template("transaction.j2", Transactions=results)
+@app.route('/transaction/<int:id>')
+def Transactions(id):
+    # Display transactions data
+    if request.method == "GET":
+        # Fetch outgoing and incoming transactions for specified account
+        query = "SELECT * FROM Transactions WHERE sender_id = %s OR destination_id = %s" % (id, id)
+        # Fetch all customers in specified account
+        query1 = """SELECT name, Customers.customer_id AS id
+                    FROM Customers 
+                    JOIN In_Account ON Customers.customer_id = In_Account.customer_id
+                    JOIN Accounts ON In_Account.account_id = Accounts.account_id
+                    WHERE Accounts.account_id = %s;""" % (id)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        results = cur.fetchall()
+        cur.execute(query1)
+        results1 = cur.fetchall()
+        return render_template("transaction.j2", Transactions=results, Customers = results1)
 
 # Customers page route
 @app.route('/customer', methods=["POST", "GET"])
@@ -162,7 +174,7 @@ def delete_customer(id):
     mysql.connection.commit()
     # redirect back to people page
     return redirect("/customer")
-
+ 
 
 
 # Cards page route
