@@ -4,8 +4,6 @@
 -- 10/26/2023
 
 
-
-
 -- Turn off foreign key checks
 SET FOREIGN_KEY_CHECKS = 0;
 --
@@ -115,6 +113,7 @@ DROP TABLE IF EXISTS `Goes_to`;
 CREATE TABLE `Goes_to` (
     branch_id INT NOT NULL,
     customer_id INT NOT NULL,
+    CONSTRAINT clientat UNIQUE(customer_id, branch_id),
     FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ON UPDATE CASCADE ,
     FOREIGN KEY (branch_id) REFERENCES Branches(branch_id) ON DELETE CASCADE ON UPDATE CASCADE
   
@@ -222,7 +221,6 @@ INSERT INTO Goes_to
 VALUES
 (04, 01),
 (03, 01),
-(03, 02),
 (01, 01),
 (02, 03);
 

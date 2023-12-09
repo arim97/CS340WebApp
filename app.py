@@ -103,17 +103,19 @@ def Transactions(id):
         # Fetch outgoing and incoming transactions for specified account
         query = "SELECT * FROM Transactions WHERE sender_id = %s OR destination_id = %s" % (id, id)
         # Fetch all customers in specified account
-        query1 = """SELECT name, Customers.customer_id AS id
+        query1 = """SELECT name, Customers.customer_id AS id, Branches.branch_name
                     FROM Customers 
                     JOIN In_Account ON Customers.customer_id = In_Account.customer_id
                     JOIN Accounts ON In_Account.account_id = Accounts.account_id
+                    JOIN Goes_to ON Goes_to.customer_id = In_Account.customer_id
+                    JOIN Branches ON Branches.branch_id = Goes_to.branch_id
                     WHERE Accounts.account_id = %s;""" % (id)
         cur = mysql.connection.cursor()
         cur.execute(query)
         results = cur.fetchall()
         cur.execute(query1)
         results1 = cur.fetchall()
-        return render_template("transaction.j2", Transactions=results, Customers = results1)
+        return render_template("transaction.j2",ID = id, Transactions=results, In_acc = results1)
 
 # Customers page route
 @app.route('/customer', methods=["POST", "GET"])

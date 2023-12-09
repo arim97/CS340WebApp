@@ -21,17 +21,17 @@
     <!-- Now, iterate through every transaction in Transactions-->
     {% for transaction in Transactions %}
     <tr>
-        <!-- Then iterate through every key in the current transaction dictionary -->
-        {% for key in transaction.keys() %}
-        <!-- Create a <td> element with the value of that key in it -->
-        <td>{{transaction[key]}}</td>
-        {% endfor %}
-        <td><a href="edit_Transactions/{{transaction.id}}" class="btn btn-default">Edit</a></td>
-		<td><a href="delete_Transactions/{{transaction.id}}" class="btn btn-default">Delete</a></td>
+        <td>{{transaction.transaction_id}}</td>
+        <td>{{transaction.destination_id}}</td>
+        <td>${{transaction.amount}}</td>
+        <td>{{transaction.date}}</td>
+        <td>{{transaction.type}}</td>
+        <td>{{transaction.comments}}</td>
+        <td>{{transaction.sender_id}}</td>
     </tr>
     {% endfor %}
     </table>
-    <td><a href="/" class="btn btn-default">Return</a></td>
+  
 
 
 
@@ -41,8 +41,7 @@
 			<legend><strong>Add Transaction</strong></legend>
 			<fieldset>
                 <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-				<label for="sender">From:</label>
-				<input type="text" class="form-control" id="sender_id" name="sender" pattern="[0-9]{1,}" placeholder="">
+				<input type="hidden" class="form-control" value="{{ID}}" id="sender_id" name="sender" pattern="[0-9]{1,}" placeholder="">
 				<label for="destination">To:</label>
 				<input type="text" class="form-control" id="destination" name="destination" pattern="[0-9]{1,}" placeholder="">
 				<label for="amount">Amount:</label>
@@ -69,14 +68,17 @@
     
     <tr>
         <th>Name</th>
+        <th>Client At</th>
     </tr>
     <tbody>
 
     <!-- Now, iterate through every customer in Customers-->
-    {% for customer in Customers %}
+    {% for customer in In_acc %}
     <tr>
         <td>{{customer.name}}</td>
+        <td>{{customer.branch_name}}</td>
 		<td><a href="remove_from_acc/{{customer.id}}" class="btn btn-default">Delete</a></td>
     </tr>
     {% endfor %}
     </table>
+    <td><a href="/" class="btn btn-default">Return</a></td>
