@@ -11,7 +11,7 @@
 	</script>
 </head>
 
-    <body onload="browseAccounts()">
+    <body>
     <div id="browse">
     <caption>Accounts</caption>
     <table border="1" cellpadding="5">
@@ -60,7 +60,7 @@
         <input class="btn" type="button" value="Cancel" onClick="browseAccounts()"> 
     </form>
 
-</div><!--insert-->
+    </div><!--insert-->
 <div id="edit">
     <!-- form to edit data in Accounts-->
     <form id="editAccount" action="/edit_account/{{accounts[0].ID}}" method="POST">

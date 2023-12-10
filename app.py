@@ -41,7 +41,7 @@ def Accounts():
     
 
     
-    # insert an account into the accounts entity
+    # insert an account into the accounts table
     if request.method == "POST":
         # fire off if user presses the Add Account button
         if request.form.get("Add_Account"):
@@ -96,7 +96,7 @@ def edit_accounts(id):
 
 
 # Transactions page route
-@app.route('/transaction/<int:id>')
+@app.route('/transaction/<int:id>',  methods=["POST", "GET"])
 def Transactions(id):
     # Display transactions data
     if request.method == "GET":
@@ -110,12 +110,51 @@ def Transactions(id):
                     JOIN Goes_to ON Goes_to.customer_id = In_Account.customer_id
                     JOIN Branches ON Branches.branch_id = Goes_to.branch_id
                     WHERE Accounts.account_id = %s;""" % (id)
+        query2 = """SELECT *
+                    FROM Customers 
+                    LEFT JOIN In_Account ON Customers.customer_id = In_Account.customer_id AND In_Account.account_id = %s
+                    WHERE In_Account.customer_id IS NULL;""" % (id)
         cur = mysql.connection.cursor()
         cur.execute(query)
         results = cur.fetchall()
         cur.execute(query1)
         results1 = cur.fetchall()
-        return render_template("transaction.j2",ID = id, Transactions=results, In_acc = results1)
+        cur.execute(query2)
+        results2 = cur.fetchall()
+        return render_template("transaction.j2",ID = id, Transactions=results, In_acc = results1, Customers = results2)
+    
+        # Separate out the request methods, in this case this is for a POST
+    # insert a customer into the In_account table, signifying as part of a shared account.
+    if request.method == "POST":
+        # fire off if user presses the Add Customer button
+        if request.form.get("Add_to_Acc"):
+            # grab user form inputs
+            account_id = request.form["aid"]
+            customer_id = request.form["cid"]
+            query = "INSERT INTO In_Account (account_id, customer_id) VALUES (%s, %s)"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (account_id, customer_id))
+            mysql.connection.commit()
+            # redirect back to Transactions page for this account
+            return redirect("/transaction/%s" % id)
+    
+
+# Remove customer from account functionality       
+@app.route("/remove_from_acc", methods=["POST"])
+def remove_from_acc():
+    # mySQL query to delete the customer with cid from account with aid
+    if request.form:
+        # grab user form inputs
+        account_id = request.form["aid"]
+        customer_id = request.form["cid"]
+        print(customer_id)
+        query = "DELETE FROM In_Account WHERE customer_id = %s AND account_id = %s"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (customer_id, account_id))
+        mysql.connection.commit()
+        # redirect back to Transactions page for this account
+        return redirect("/transaction/%s" % account_id)
+    
 
 # Customers page route
 @app.route('/customer', methods=["POST", "GET"])
@@ -129,7 +168,7 @@ def Customers():
         return render_template("customer.j2", customers=results)
 
 # Separate out the request methods, in this case this is for a POST
-# insert an customer into the Customers entity
+# insert an customer into the Customers table
     if request.method == "POST":
         # fire off if user presses the Add Customer button
         if request.form.get("Add_Customer"):
@@ -195,7 +234,7 @@ def Cards():
     
 
     # Separate out the request methods, in this case this is for a POST
-    # insert a card into the cards entity
+    # insert a card into the cards table
     if request.method == "POST":
         # fire off if user presses the Add Account button
         if request.form.get("Add_Card"):
@@ -263,7 +302,7 @@ def Branches():
     
 
     # Separate out the request methods, in this case this is for a POST
-    # insert an account into the branches entity
+    # insert an account into the branches table
     if request.method == "POST":
         # fire off if user presses the Add Account button
         if request.form.get("Add_Branch"):
@@ -312,7 +351,6 @@ def edit_branch(branch_id):
             address = request.form["address"]
             phone = request.form["phone"]
             manager = request.form["manager"]
-
             query = "UPDATE Branches SET Branches.branch_id = %s, Branches.branch_name = %s, Branches.address = %s, Branches.phone = %s, Branches.manager = %s WHERE Branches.branch_id = %s"
             cur = mysql.connection.cursor()
             cur.execute(query, (branch_id, branch_name, address, phone, manager, branch_id))

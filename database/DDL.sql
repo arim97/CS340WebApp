@@ -99,6 +99,7 @@ DROP TABLE IF EXISTS `In_Account`;
 CREATE TABLE `In_Account` (
     customer_id INT NOT NULL,
     account_id INT NOT NULL,
+    CONSTRAINT inacc UNIQUE(customer_id, account_id),
     FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ON UPDATE CASCADE , 
     FOREIGN KEY (account_id) REFERENCES Accounts(account_id) ON DELETE CASCADE
   

@@ -1,8 +1,8 @@
 <!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
 
  <link rel="stylesheet" href="/static/css/style.css">
- 
- <caption>Transactions</caption>
+ <h2>Account No. :{{ID}}</h2>
+ <caption>Account Transactions: </caption>
     <table border="1" cellpadding="5">
     <thead>
     
@@ -35,35 +35,8 @@
 
 
 
-    <div id="insert">
-		<!-- form to INSERT new data into Transactions-->
-		<form id="insertTransaction" action="/transaction/" method="post">
-			<legend><strong>Add Transaction</strong></legend>
-			<fieldset>
-                <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-				<input type="hidden" class="form-control" value="{{ID}}" id="sender_id" name="sender" pattern="[0-9]{1,}" placeholder="">
-				<label for="destination">To:</label>
-				<input type="text" class="form-control" id="destination" name="destination" pattern="[0-9]{1,}" placeholder="">
-				<label for="amount">Amount:</label>
-				<input type="text" class="form-control" id="amount" name="amount" pattern="[0-9]{1,}" placeholder="" required>
-                <label for="date">Date:</label>
-                <input type="date" id="start" name="date" value="2023-11-03" min="2023-11-01" max="2025-12-31" required />
-				<select class="form-control" id="type" name="type" pattern="[0-3]{1}" placeholder="" required>
-				<!-- these are hard coded, but you can add code to make this dynamic -->
-					<option value="0">&nbsp;</option>
-					<option value="1">Transfer</option>
-					<option value="2">Withdrawal</option>
-					<option value="3">Deposit</option>
-				</select>
-				<label for="comments">Comments:</label>
-				<input type="text" class="form-control" id="comment" name="phone" commentn="[A-Za-z0-9]{1,}" placeholder="" required> 
-            </fieldset>
-
-            <!-- Create 'Add Transaction' and 'Cancel' buttons -->
-			<input type="submit" value="Add Transaction" name="Add_Transaction" class="btn btn-primary" style="margin:.5rem;">
-			<input class="btn" type="button" value="Cancel" onClick="browseTransaction()"> 
-        </form>
-        <table border="1" cellpadding="5">
+   <caption>Customers in Account</caption>
+    <table border="1" cellpadding="5">
     <thead>
     
     <tr>
@@ -77,8 +50,27 @@
     <tr>
         <td>{{customer.name}}</td>
         <td>{{customer.branch_name}}</td>
-		<td><a href="remove_from_acc/{{customer.id}}" class="btn btn-default">Delete</a></td>
+		<td><form id="remove_from_acc" action="/remove_from_acc" method="post">
+			<input type="hidden" value="{{ID}}" id="aid" name="aid" placeholder="">
+            <input type="hidden" value="{{customer.id}}" id="cid" name="cid" placeholder="">               
+            <input type="submit" value="Remove" name="remove_from_acc" class="btn btn-primary" style="margin:.5rem;"></td>
+			</form>
     </tr>
     {% endfor %}
     </table>
+
+     <div id="insert">
+		<!-- form to INSERT a new customer into Account-->
+		<form id="Add_to_Acc" action="/transaction/{{ID}}" method="post">
+			<legend><strong>Add to account</strong></legend>
+			<fieldset>
+				<input type="hidden" class="form-control" value="{{ID}}" id="aid" name="aid" placeholder="">
+				<select class="form-control" id="cid" name="cid" placeholder="" required>
+					 {% for customer in Customers %}
+                    <option value="{{customer.customer_id}}">{{customer.name}}, {{customer.customer_id}}</option>
+                     {% endfor %}
+				</select>
+            </fieldset>
+			<input type="submit" value="Add into Account" name="Add_to_Acc" class="btn btn-primary" style="margin:.5rem;">
+        </form>
     <td><a href="/" class="btn btn-default">Return</a></td>
