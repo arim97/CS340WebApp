@@ -39,8 +39,6 @@ def Accounts():
         # render edit_accounts page passing our query data to the edit_accounts template
         return render_template("account.j2", accounts=data)
     
-
-    
     # insert an account into the accounts table
     if request.method == "POST":
         # fire off if user presses the Add Account button
@@ -225,12 +223,15 @@ def Cards():
     if request.method == "GET":
         # mySQL query to grab all the cards in cards table
         query = "SELECT * FROM Cards"
+        query1 = "SELECT * FROM Accounts"
         cur = mysql.connection.cursor()
         cur.execute(query)
-        data = cur.fetchall()
+        results = cur.fetchall()
+        cur.execute(query1)
+        results1 = cur.fetchall()
 
         # render cards page passing our query data to the edit_cards template
-        return render_template("cards.j2", Cards=data)
+        return render_template("cards.j2", Cards=results, Accounts = results1)
     
 
     # Separate out the request methods, in this case this is for a POST

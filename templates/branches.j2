@@ -12,9 +12,10 @@
 	</script>
 </head>
 
-    <body onload="browseBranches()">
+    <body>
     <div id="browse">
     <caption>Branches</caption>
+    {% if Branches %}
     <table border="1" cellpadding="5">
     <thead> 
     <tr>
@@ -45,6 +46,7 @@
     </tr>
     {% endfor %}
     </table>
+    {% endif %}
     <p>&nbsp;</p>
     </div>	<!-- browse -->
 
@@ -71,7 +73,6 @@
         <input type="submit" value="Add Branch" name="Add_Branch" class="btn btn-primary" style="margin:.5rem;">
         <input class="btn" type="button" value="Cancel" onClick="browseBranches()"> 
     </form>
-
 
     <td><a href="/" class="btn btn-default">Return</a></td>
 </body>
