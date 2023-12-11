@@ -11,9 +11,10 @@
 </head>
 
 <body>
-    <div>
+        <div>
         <caption>Customers</caption>
         <table border="1" cellpadding="5">
+    {% if customers %}
             <thead>
                 <tr>
                     <!-- Iterate through each key in the first entry to get the
@@ -43,13 +44,13 @@
                 {% endfor %}
         </table>
         <p>&nbsp;</p>
-    </div> <!-- browse -->
+        </div> <!-- browse -->
+    {% endif %}
     <div id="insert">
         <!-- form to INSERT new data into Customers-->
         <form id="Add_Customer" action="/customer" method="post">
-            <legend><strong>Add Customer</strong></legend>
             <fieldset>
-                <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
+                <!-- Customer Create Form -->
                 <label for="name">Name:</label>
                 <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
                 <label for="address">Address:</label>
@@ -59,15 +60,14 @@
                 <label for="phone">Phone No.:</label>
                 <input type="text" class="form-control" id="phone" name="phone" pattern="[0-9]{1,}" placeholder="" required>
             </fieldset>
-
-            <!-- Create 'Add Customer' and 'Cancel' buttons -->
+            <!-- Create 'Add Customer' button-->
             <input type="submit" value="Add Customer" name="Add_Customer" class="btn btn-primary" style="margin:.5rem;">
-            <input class="btn" type="button" value="Cancel" onClick="browseCustomers()">
         </form>
+
+    {% if customers %}
         <div id="edit">
             <!-- form to edit data in customers-->
             <form id="Edit_Customer" action="/edit_customers/{{customers[0].ID}}" method="POST">
-                <legend><strong>Edit Customer</strong></legend>
                 <fieldset>
                     <label for="type">ID</label>
                     <select class="form-control" id="customerID" name="customerID" placeholder="" required>
@@ -91,6 +91,7 @@
                 <input class="btn" type="button" value="Cancel" onClick="browseCustomers()" style="margin:.5rem;">
             </form>
         </div><!--edit-->
+    {% endif %} 
      <td><a href="/" class="btn btn-default">Return</a></td>
 </body>
 
