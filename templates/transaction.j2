@@ -59,18 +59,37 @@
     {% endfor %}
     </table>
 
-     <div id="insert">
-		<!-- form to INSERT a new customer into Account-->
-		<form id="Add_to_Acc" action="/transaction/{{ID}}" method="post">
-			<legend><strong>Add to account</strong></legend>
-			<fieldset>
-				<input type="hidden" class="form-control" value="{{ID}}" id="aid" name="aid" placeholder="">
-				<select class="form-control" id="cid" name="cid" placeholder="" required>
-					 {% for customer in Customers %}
-                    <option value="{{customer.customer_id}}">{{customer.name}}, {{customer.customer_id}}</option>
-                     {% endfor %}
-				</select>
-            </fieldset>
-			<input type="submit" value="Add into Account" name="Add_to_Acc" class="btn btn-primary" style="margin:.5rem;">
-        </form>
-    <td><a href="/" class="btn btn-default">Return</a></td>
+     
+    <!-- form to INSERT a new customer into Account-->
+    <caption>Insert a new customer into this account</caption>
+    <form id="Add_to_Acc" action="/transaction/{{ID}}" method="post">
+        <fieldset>
+            <input type="hidden" class="form-control" value="{{ID}}" id="aid" name="aid" placeholder="">
+            <select class="form-control" id="cid" name="cid" placeholder="" required>
+                    {% for customer in Out_acc %}
+                <option value="{{customer.customer_id}}">{{customer.name}}, {{customer.customer_id}}</option>
+                    {% endfor %}
+            </select>
+        </fieldset>
+        <input type="submit" value="Add into Account" name="Add_to_Acc" class="btn btn-primary" style="margin:.5rem;">
+    </form>
+    <!-- Change a customer's home branch-->
+    <caption>Update home branch for clients in this account</caption>
+    <form id="change_branch" action="/change_branch" method="post">
+        <fieldset>
+            <input type="hidden" value="{{ID}}" id="aid" name="aid" placeholder="">
+            <select class="form-control" id="cid" name="cid" placeholder="">
+                {% for customer in In_acc %}
+                <option value="{{customer.id}}">{{customer.name}}</option>
+                {% endfor %}
+            </select>
+             <select class="form-control" id="bid" name="bid" placeholder="" >
+                <option value="NULL">&nbsp;</option>
+                {% for branch in Branches %}
+                <option value="{{branch.branch_id}}">Name:{{branch.branch_name}}, ID:{{branch.branch_id}} </option>
+                {% endfor %}
+            </select>
+        </fieldset>
+        <input type="submit" value="Save" name="change_branch" class="btn btn-primary" style="margin:.5rem;">
+    </form>
+<a href="/" class="btn btn-default">Return</a>

@@ -97,10 +97,10 @@ CREATE TABLE `Cards` (
 DROP TABLE IF EXISTS `In_Account`;
 
 CREATE TABLE `In_Account` (
-    customer_id INT NOT NULL,
-    account_id INT NOT NULL,
+    customer_id INT,
+    account_id INT,
     CONSTRAINT inacc UNIQUE(customer_id, account_id),
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ON UPDATE CASCADE , 
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE, 
     FOREIGN KEY (account_id) REFERENCES Accounts(account_id) ON DELETE CASCADE
   
 );
@@ -112,10 +112,10 @@ CREATE TABLE `In_Account` (
 DROP TABLE IF EXISTS `Goes_to`;
 
 CREATE TABLE `Goes_to` (
-    branch_id INT NOT NULL,
-    customer_id INT NOT NULL,
+    branch_id INT,
+    customer_id INT,
     CONSTRAINT clientat UNIQUE(customer_id, branch_id),
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ON UPDATE CASCADE ,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES Branches(branch_id) ON DELETE CASCADE ON UPDATE CASCADE
   
 );

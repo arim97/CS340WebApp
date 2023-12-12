@@ -106,12 +106,14 @@ def Transactions(id):
                     JOIN In_Account ON Customers.customer_id = In_Account.customer_id
                     JOIN Accounts ON In_Account.account_id = Accounts.account_id
                     JOIN Goes_to ON Goes_to.customer_id = In_Account.customer_id
-                    JOIN Branches ON Branches.branch_id = Goes_to.branch_id
+                    LEFT JOIN Branches ON Branches.branch_id = Goes_to.branch_id
                     WHERE Accounts.account_id = %s;""" % (id)
         query2 = """SELECT *
                     FROM Customers 
                     LEFT JOIN In_Account ON Customers.customer_id = In_Account.customer_id AND In_Account.account_id = %s
                     WHERE In_Account.customer_id IS NULL;""" % (id)
+        
+        query3 = "SELECT * FROM Branches;"
         cur = mysql.connection.cursor()
         cur.execute(query)
         results = cur.fetchall()
@@ -119,12 +121,14 @@ def Transactions(id):
         results1 = cur.fetchall()
         cur.execute(query2)
         results2 = cur.fetchall()
-        return render_template("transaction.j2",ID = id, Transactions=results, In_acc = results1, Customers = results2)
+        cur.execute(query3)
+        results3 = cur.fetchall()
+        return render_template("transaction.j2",ID = id, Transactions=results, In_acc = results1, Out_acc = results2, Branches = results3)
     
-        # Separate out the request methods, in this case this is for a POST
+    # Separate out the request methods, in this case this is for a POST
     # insert a customer into the In_account table, signifying as part of a shared account.
     if request.method == "POST":
-        # fire off if user presses the Add Customer button
+        # fire off if user presses the Add into Account button
         if request.form.get("Add_to_Acc"):
             # grab user form inputs
             account_id = request.form["aid"]
@@ -135,7 +139,7 @@ def Transactions(id):
             mysql.connection.commit()
             # redirect back to Transactions page for this account
             return redirect("/transaction/%s" % id)
-    
+       
 
 # Remove customer from account functionality       
 @app.route("/remove_from_acc", methods=["POST"])
@@ -145,14 +149,29 @@ def remove_from_acc():
         # grab user form inputs
         account_id = request.form["aid"]
         customer_id = request.form["cid"]
-        print(customer_id)
         query = "DELETE FROM In_Account WHERE customer_id = %s AND account_id = %s"
         cur = mysql.connection.cursor()
         cur.execute(query, (customer_id, account_id))
         mysql.connection.commit()
         # redirect back to Transactions page for this account
         return redirect("/transaction/%s" % account_id)
-    
+
+@app.route("/change_branch", methods=["POST"])
+def change_branch():
+# fire off if user clicks the 'Change Branch' button
+    if request.form.get("change_branch"):
+        # grab user form inputs
+        account_id = request.form["aid"]
+        customer_id = request.form["cid"]
+        branch_id = request.form["bid"]
+        print("aid = " + account_id, "cid = " + customer_id, "bid = " + branch_id)
+        query = "UPDATE Goes_to SET Goes_to.branch_id = %s WHERE Goes_to.customer_id = %s"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (branch_id, customer_id))
+        mysql.connection.commit()
+        # redirect back to the account transactions page after we execute the update query
+        return redirect("/transaction/%s" % account_id)   
+        
 
 # Customers page route
 @app.route('/customer', methods=["POST", "GET"])
@@ -223,7 +242,7 @@ def Cards():
     if request.method == "GET":
         # mySQL query to grab all the cards in cards table
         query = "SELECT * FROM Cards"
-        query1 = "SELECT * FROM Accounts"
+        query1 = "SELECT account_id FROM Accounts"
         cur = mysql.connection.cursor()
         cur.execute(query)
         results = cur.fetchall()

@@ -34,11 +34,11 @@
             <td><a href="delete_account/{{account.ID}}" class="btn btn-default">Delete</a></td>
         </tr>
         {% endfor %}
-    
+     {% endif %}
     </table>
     <p>&nbsp;</p>
     </div>	<!-- browse -->
-    {% endif %}
+   
 
 	<div id="insert">
     <!-- form to INSERT new data into Accounts-->
@@ -78,6 +78,6 @@
     </div><!--edit-->
 {% endif %}
 
-    <td><a href="/" class="btn btn-default">Return</a></td>
+    <a href="/" class="btn btn-default">Return</a>
 </body>
 </html>
