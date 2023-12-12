@@ -1,8 +1,19 @@
 <!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
 
  <link rel="stylesheet" href="/static/css/style.css">
- <h2>Account No. :{{ID}}</h2>
- <caption>Account Transactions: </caption>
+
+<nav>
+<a href="/account" class="btn btn-default">Accounts</a>
+<a href="/customer" class="btn btn-default">Customers</a>
+<a href="/cards" class="btn btn-default">Cards</a>
+<a href="/branches" class="btn btn-default">Branches</a>
+</nav>
+ 
+ <h1>Account No. :{{ID}}<</h1>
+
+
+ <caption>Account Transactions:</caption>
+
     <table border="1" cellpadding="5">
     <thead>
     
