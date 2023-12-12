@@ -9,7 +9,7 @@
     <div>
         <table border="1" cellpadding="5"> 
             <caption> Editing Branch: </caption>
-            <!-- Access accounts tuple passed from app.py -->
+            <!-- Access Branch tuple passed from app.py -->
             {% if Branches %}
                 <thead>
                     <tr>
@@ -34,11 +34,11 @@
         </table>
 
         <div id="edit">
-            <!-- form to edit data in Accounts-->
-            <form id="editBranch" action="/edit_branch/{{Branches[0].branch_id}}" method="post">
+            <!-- form to edit data in Branches-->
+            <form id="Edit_Branch action="/edit_branch/{{Branches[0].branch_id}}" method="post">
                 <legend><strong>Edit Branch</strong></legend>
                 <fieldset>
-                    <!-- We can preset form inputs to match attributes currently stored for 'id' of account to be updated via value= and accessing our passed accounts tuple -->
+                    <!-- We can preset form inputs to match attributes currently stored for 'id' of branch to be updated via value= and accessing our passed accounts tuple -->
                     <!-- Create hidden form input to store the passed 'id' of the account we are editing so we can access it easily in our 'POST' method in our app.py -->
                     <input type="hidden" value="{{Branches[0].branch_id}}" class="form-control" id="branch_id" name="branch_id" required>
                     
@@ -46,18 +46,18 @@
                     <label for="branch_name">Name:</label>
                     <input type="text" value="{{Branches[0].branch_name}}" class="form-control" id="branch_name" name="branch_name"required> 
 
-                    <label for="phone">exp_date:</label>
+                    <label for="address">Address:</label>
+                    <input type="text" value="{{Branches[0].address}}" class="form-control" id="address" name="address"required> 
+                    
+                    <label for="phone">Phone:</label>
                     <input type="text" value="{{Branches[0].phone}}" class="form-control" id="phone" name="phone"required> 
 
-                    <label for="address">exp_date:</label>
-                    <input type="text" value="{{Branches[0].address}}" class="form-control" id="address" name="address"required> 
-
-                    <label for="manager">exp_date:</label>
+                    <label for="manager">Manager:</label>
                     <input type="text" value="{{Branches[0].manager}}" class="form-control" id="manager" name="manager"required> 
                 
                 </fieldset>
                 <input type="submit" value="Edit Branch" name="Edit_Branch" class="btn btn-primary" style="margin:.5rem;">
-                <a href='/cards'><input class="btn" type="button" value="Cancel"></a>
+                <a href='/branches'><input class="btn" type="button" value="Cancel"></a>
             </form>
         </div>
     </div>

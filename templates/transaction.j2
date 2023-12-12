@@ -1,14 +1,19 @@
 <!--Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2 -->
- 
+
  <link rel="stylesheet" href="/static/css/style.css">
- <nav>
+
+<nav>
 <a href="/account" class="btn btn-default">Accounts</a>
 <a href="/customer" class="btn btn-default">Customers</a>
 <a href="/cards" class="btn btn-default">Cards</a>
 <a href="/branches" class="btn btn-default">Branches</a>
 </nav>
  
- <h1>Transactions</h1>
+ <h1>Account No. :{{ID}}<</h1>
+
+
+ <caption>Account Transactions:</caption>
+
     <table border="1" cellpadding="5">
     <thead>
     
@@ -16,7 +21,6 @@
         <!-- Iterate through each key in the first entry to get the
         column name -->
         {% for key in Transactions[0].keys() %}
-
         <!-- Create a <th> tag with the key inside of it, this will be
         our header row -->
         <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
@@ -28,46 +32,75 @@
     <!-- Now, iterate through every transaction in Transactions-->
     {% for transaction in Transactions %}
     <tr>
-        <!-- Then iterate through every key in the current transaction dictionary -->
-        {% for key in transaction.keys() %}
-        <!-- Create a <td> element with the value of that key in it -->
-        <td>{{transaction[key]}}</td>
-        {% endfor %}
-        <td><a href="edit_Transactions/{{transaction.id}}" class="btn btn-default">Edit</a></td>
-		<td><a href="delete_Transactions/{{transaction.id}}" class="btn btn-default">Delete</a></td>
+        <td>{{transaction.transaction_id}}</td>
+        <td>{{transaction.destination_id}}</td>
+        <td>${{transaction.amount}}</td>
+        <td>{{transaction.date}}</td>
+        <td>{{transaction.type}}</td>
+        <td>{{transaction.comments}}</td>
+        <td>{{transaction.sender_id}}</td>
     </tr>
     {% endfor %}
     </table>
-    <td><a href="/" class="btn btn-default">Return</a></td>
+  
 
 
 
-    <div id="insert">
-		<!-- form to INSERT new data into Transactions-->
-		<form id="insertTransaction" action="/transaction/" method="post">
-			<legend><strong>Add Transaction</strong></legend>
-			<fieldset>
-                <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-				<label for="sender">From:</label>
-				<input type="text" class="form-control" id="sender_id" name="sender" pattern="[0-9]{1,}" placeholder="">
-				<label for="destination">To:</label>
-				<input type="text" class="form-control" id="destination" name="destination" pattern="[0-9]{1,}" placeholder="">
-				<label for="amount">Amount:</label>
-				<input type="text" class="form-control" id="amount" name="amount" pattern="[0-9]{1,}" placeholder="" required>
-                <label for="date">Date:</label>
-                <input type="date" id="start" name="date" value="2023-11-03" min="2023-11-01" max="2025-12-31" required />
-				<select class="form-control" id="type" name="type" pattern="[0-3]{1}" placeholder="" required>
-				<!-- these are hard coded, but you can add code to make this dynamic -->
-					<option value="0">&nbsp;</option>
-					<option value="1">Transfer</option>
-					<option value="2">Withdrawal</option>
-					<option value="3">Deposit</option>
-				</select>
-				<label for="comments">Comments:</label>
-				<input type="text" class="form-control" id="comment" name="phone" commentn="[A-Za-z0-9]{1,}" placeholder="" required> 
-            </fieldset>
+   <caption>Customers in Account</caption>
+    <table border="1" cellpadding="5">
+    <thead>
+    
+    <tr>
+        <th>Name</th>
+        <th>Client At</th>
+    </tr>
+    <tbody>
 
-            <!-- Create 'Add Transaction' and 'Cancel' buttons -->
-			<input type="submit" value="Add Transaction" name="Add_Transaction" class="btn btn-primary" style="margin:.5rem;">
-			<input class="btn" type="button" value="Cancel" onClick="browseTransaction()"> 
-        </form>
+    <!-- Now, iterate through every customer in Customers-->
+    {% for customer in In_acc %}
+    <tr>
+        <td>{{customer.name}}</td>
+        <td>{{customer.branch_name}}</td>
+		<td><form id="remove_from_acc" action="/remove_from_acc" method="post">
+			<input type="hidden" value="{{ID}}" id="aid" name="aid" placeholder="">
+            <input type="hidden" value="{{customer.id}}" id="cid" name="cid" placeholder="">               
+            <input type="submit" value="Remove" name="remove_from_acc" class="btn btn-primary" style="margin:.5rem;"></td>
+			</form>
+    </tr>
+    {% endfor %}
+    </table>
+
+     
+    <!-- form to INSERT a new customer into Account-->
+    <caption>Insert a new customer into this account</caption>
+    <form id="Add_to_Acc" action="/transaction/{{ID}}" method="post">
+        <fieldset>
+            <input type="hidden" class="form-control" value="{{ID}}" id="aid" name="aid" placeholder="">
+            <select class="form-control" id="cid" name="cid" placeholder="" required>
+                    {% for customer in Out_acc %}
+                <option value="{{customer.customer_id}}">{{customer.name}}, {{customer.customer_id}}</option>
+                    {% endfor %}
+            </select>
+        </fieldset>
+        <input type="submit" value="Add into Account" name="Add_to_Acc" class="btn btn-primary" style="margin:.5rem;">
+    </form>
+    <!-- Change a customer's home branch-->
+    <caption>Update home branch for clients in this account</caption>
+    <form id="change_branch" action="/change_branch" method="post">
+        <fieldset>
+            <input type="hidden" value="{{ID}}" id="aid" name="aid" placeholder="">
+            <select class="form-control" id="cid" name="cid" placeholder="">
+                {% for customer in In_acc %}
+                <option value="{{customer.id}}">{{customer.name}}</option>
+                {% endfor %}
+            </select>
+             <select class="form-control" id="bid" name="bid" placeholder="" >
+                <option value="NULL">&nbsp;</option>
+                {% for branch in Branches %}
+                <option value="{{branch.branch_id}}">Name:{{branch.branch_name}}, ID:{{branch.branch_id}} </option>
+                {% endfor %}
+            </select>
+        </fieldset>
+        <input type="submit" value="Save" name="change_branch" class="btn btn-primary" style="margin:.5rem;">
+    </form>
+<a href="/" class="btn btn-default">Return</a>

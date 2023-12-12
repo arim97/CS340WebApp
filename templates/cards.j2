@@ -17,9 +17,10 @@
 	</script>
 </head>
 
-    <body onload="browseCards()">
+    <body>
     <div id="browse">
     <h1>Cards</h1>
+    {% if Cards %}
     <table border="1" cellpadding="5">
     <thead> 
     <tr>
@@ -34,20 +35,21 @@
     </tr>
     <tbody>
 
-    <!-- Now, iterate through every account in Accounts -->
-    {% for card in Cards %}
-    <tr>
-        <!-- Then iterate through every key in the current account dictionary -->
-        <td>{{card.card_id}}</td>
-        <td>{{card.account_id}}</td>
-        <td>{{card.security_code}}</td>
-        <td>{{card.exp_date}}</td>
-        
-        <td><a href="edit_card/{{card.card_id}}" class="btn btn-default">Edit</a></td>
-		<td><a href="delete_card/{{card.card_id}}" class="btn btn-default">Delete</a></td>
-    </tr>
-    {% endfor %}
-    </table>
+
+        <!-- Now, iterate through every card in Cards -->
+        {% for card in Cards %}
+        <tr>
+            <td>{{card.card_id}}</td>
+            <td><a href="/transaction/{{card.account_id}}" class="btn btn-default">{{card.account_id}}</a></td>
+            <td>{{card.security_code}}</td>
+            <td>{{card.exp_date}}</td>
+            
+            <td><a href="edit_card/{{card.card_id}}" class="btn btn-default">Edit</a></td>
+            <td><a href="delete_card/{{card.card_id}}" class="btn btn-default">Delete</a></td>
+        </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
     <p>&nbsp;</p>
     </div>	<!-- browse -->
 
@@ -57,20 +59,22 @@
     <form id="Add_Card" action="/cards" method="POST">
         <legend><strong>Add Card</strong></legend>
         <fieldset>
-            <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
             <label for="card_id"> Card ID </label>
             <input type="number" class="form-control" id="card_id" name="card_id" placeholder="" required>
-            <label for="account_id">Account ID</label>
-            <input type="number" class="form-control" id="account_id" name="account_id" placeholder="" required>
+                <label for="type">Account No.</label>
+                <select class="form-control" id="account_id" name="account_id" placeholder="" required>
+                    {% for account in Accounts %}
+                        <option>{{account.account_id}}</option>
+                    {% endfor %}
+                </select>
             <label for="security_code">SCC</label>
             <input type="text" class="form-control" id="security_code" name="security_code"  placeholder="" required>
             <label for="exp_date">exp_date</label>
             <input type="date" class="form-control" id="exp_date" name="exp_date" placeholder="" required>
         </fieldset>
 
-        <!-- Create 'Add Card' and 'Cancel' buttons -->
+        <!-- Create 'Create Card' button-->
         <input type="submit" value="Add Card" name="Add_Card" class="btn btn-primary" style="margin:.5rem;">
-        <input class="btn" type="button" value="Cancel" onClick="browseCards()"> 
     </form>
 
 
