@@ -1,19 +1,21 @@
-
+# Code based on CS340 Flask starter app
+# 
 from flask import Flask, render_template, json, redirect
 from flask_mysqldb import MySQL
 from flask import request
-import database.db_connector as db
 import os
 
 
 app = Flask(__name__)
-
+# Setting database credentials - remember to sanitize!
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
 app.config['MYSQL_USER'] = 'cs340_arim'
 app.config['MYSQL_PASSWORD'] = 'DlkI86YvGvtb'
 app.config['MYSQL_DB'] = 'cs340_arim'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
+# Connection object
+# Tells the program what database we are using, will be passed with every query
 mysql = MySQL(app)
 
 # Routes 
@@ -30,16 +32,14 @@ def Accounts():
     if request.method == "GET":
         # mySQL query to grab all the accounts in accounts table
         query = "SELECT account_id as ID, balance FROM Accounts"
+        # Create a cursor object to process query data and execute query
         cur = mysql.connection.cursor()
         cur.execute(query)
         data = cur.fetchall()
-
         # render edit_accounts page passing our query data to the edit_accounts template
         return render_template("account.j2", accounts=data)
     
-
-    # Separate out the request methods, in this case this is for a POST
-    # insert an account into the accounts entity
+    # insert an account into the accounts table
     if request.method == "POST":
         # fire off if user presses the Add Account button
         if request.form.get("Add_Account"):
@@ -94,14 +94,84 @@ def edit_accounts(id):
 
 
 # Transactions page route
-@app.route('/transaction')
-def Transactions():
-    #query1 = "SELECT * FROM Transactions WHERE sender_id = %s OR destination_id = %s;"
-    query1 = "SELECT * FROM Transactions;"
-    cur = mysql.connection.cursor()
-    cur.execute(query1)
-    results = cur.fetchall()
-    return render_template("transaction.j2", Transactions=results)
+@app.route('/transaction/<int:id>',  methods=["POST", "GET"])
+def Transactions(id):
+    # Display transactions data
+    if request.method == "GET":
+        # Fetch outgoing and incoming transactions for specified account
+        query = "SELECT * FROM Transactions WHERE sender_id = %s OR destination_id = %s" % (id, id)
+        # Fetch all customers in specified account
+        query1 = """SELECT name, Customers.customer_id AS id, Branches.branch_name
+                    FROM Customers 
+                    JOIN In_Account ON Customers.customer_id = In_Account.customer_id
+                    JOIN Accounts ON In_Account.account_id = Accounts.account_id
+                    JOIN Goes_to ON Goes_to.customer_id = In_Account.customer_id
+                    LEFT JOIN Branches ON Branches.branch_id = Goes_to.branch_id
+                    WHERE Accounts.account_id = %s;""" % (id)
+        query2 = """SELECT *
+                    FROM Customers 
+                    LEFT JOIN In_Account ON Customers.customer_id = In_Account.customer_id AND In_Account.account_id = %s
+                    WHERE In_Account.customer_id IS NULL;""" % (id)
+        
+        query3 = "SELECT * FROM Branches;"
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        results = cur.fetchall()
+        cur.execute(query1)
+        results1 = cur.fetchall()
+        cur.execute(query2)
+        results2 = cur.fetchall()
+        cur.execute(query3)
+        results3 = cur.fetchall()
+        return render_template("transaction.j2",ID = id, Transactions=results, In_acc = results1, Out_acc = results2, Branches = results3)
+    
+    # Separate out the request methods, in this case this is for a POST
+    # insert a customer into the In_account table, signifying as part of a shared account.
+    if request.method == "POST":
+        # fire off if user presses the Add into Account button
+        if request.form.get("Add_to_Acc"):
+            # grab user form inputs
+            account_id = request.form["aid"]
+            customer_id = request.form["cid"]
+            query = "INSERT INTO In_Account (account_id, customer_id) VALUES (%s, %s)"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (account_id, customer_id))
+            mysql.connection.commit()
+            # redirect back to Transactions page for this account
+            return redirect("/transaction/%s" % id)
+       
+
+# Remove customer from account functionality       
+@app.route("/remove_from_acc", methods=["POST"])
+def remove_from_acc():
+    # mySQL query to delete the customer with cid from account with aid
+    if request.form:
+        # grab user form inputs
+        account_id = request.form["aid"]
+        customer_id = request.form["cid"]
+        query = "DELETE FROM In_Account WHERE customer_id = %s AND account_id = %s"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (customer_id, account_id))
+        mysql.connection.commit()
+        # redirect back to Transactions page for this account
+        return redirect("/transaction/%s" % account_id)
+
+@app.route("/change_branch", methods=["POST"])
+def change_branch():
+# fire off if user clicks the 'Change Branch' button
+    if request.form.get("change_branch"):
+        # grab user form inputs
+        account_id = request.form["aid"]
+        customer_id = request.form["cid"]
+        branch_id = request.form["bid"]
+        print("aid = " + account_id, "cid = " + customer_id, "bid = " + branch_id)
+        query = "UPDATE Goes_to SET Goes_to.branch_id = %s WHERE Goes_to.customer_id = %s"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (branch_id, customer_id))
+        mysql.connection.commit()
+        # redirect back to the account transactions page after we execute the update query
+        return redirect("/transaction/%s" % account_id)   
+        
 
 # Customers page route
 @app.route('/customer', methods=["POST", "GET"])
@@ -115,7 +185,7 @@ def Customers():
         return render_template("customer.j2", customers=results)
 
 # Separate out the request methods, in this case this is for a POST
-# insert an customer into the Customers entity
+# insert an customer into the Customers table
     if request.method == "POST":
         # fire off if user presses the Add Customer button
         if request.form.get("Add_Customer"):
@@ -162,7 +232,7 @@ def delete_customer(id):
     mysql.connection.commit()
     # redirect back to people page
     return redirect("/customer")
-
+ 
 
 
 # Cards page route
@@ -172,16 +242,19 @@ def Cards():
     if request.method == "GET":
         # mySQL query to grab all the cards in cards table
         query = "SELECT * FROM Cards"
+        query1 = "SELECT account_id FROM Accounts"
         cur = mysql.connection.cursor()
         cur.execute(query)
-        data = cur.fetchall()
+        results = cur.fetchall()
+        cur.execute(query1)
+        results1 = cur.fetchall()
 
         # render cards page passing our query data to the edit_cards template
-        return render_template("cards.j2", Cards=data)
+        return render_template("cards.j2", Cards=results, Accounts = results1)
     
 
     # Separate out the request methods, in this case this is for a POST
-    # insert a card into the cards entity
+    # insert a card into the cards table
     if request.method == "POST":
         # fire off if user presses the Add Account button
         if request.form.get("Add_Card"):
@@ -249,7 +322,7 @@ def Branches():
     
 
     # Separate out the request methods, in this case this is for a POST
-    # insert an account into the branches entity
+    # insert an account into the branches table
     if request.method == "POST":
         # fire off if user presses the Add Account button
         if request.form.get("Add_Branch"):
@@ -298,7 +371,6 @@ def edit_branch(branch_id):
             address = request.form["address"]
             phone = request.form["phone"]
             manager = request.form["manager"]
-
             query = "UPDATE Branches SET Branches.branch_id = %s, Branches.branch_name = %s, Branches.address = %s, Branches.phone = %s, Branches.manager = %s WHERE Branches.branch_id = %s"
             cur = mysql.connection.cursor()
             cur.execute(query, (branch_id, branch_name, address, phone, manager, branch_id))

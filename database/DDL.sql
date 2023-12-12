@@ -4,8 +4,6 @@
 -- 10/26/2023
 
 
-
-
 -- Turn off foreign key checks
 SET FOREIGN_KEY_CHECKS = 0;
 --
@@ -99,23 +97,25 @@ CREATE TABLE `Cards` (
 DROP TABLE IF EXISTS `In_Account`;
 
 CREATE TABLE `In_Account` (
-    customer_id INT NOT NULL,
-    account_id INT NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ON UPDATE CASCADE , 
+    customer_id INT,
+    account_id INT,
+    CONSTRAINT inacc UNIQUE(customer_id, account_id),
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE, 
     FOREIGN KEY (account_id) REFERENCES Accounts(account_id) ON DELETE CASCADE
   
 );
 
 --
--- Table structure for table go_to``
+-- Table structure for table goes_to``
 --
 -- Holds information for which branch serves which customer
 DROP TABLE IF EXISTS `Goes_to`;
 
 CREATE TABLE `Goes_to` (
-    branch_id INT NOT NULL,
-    customer_id INT NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ,
+    branch_id INT,
+    customer_id INT,
+    CONSTRAINT clientat UNIQUE(customer_id, branch_id),
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (branch_id) REFERENCES Branches(branch_id) ON DELETE CASCADE ON UPDATE CASCADE
   
 );
@@ -211,6 +211,19 @@ VALUES
 (03, 4321456),
 (01, 3526145),
 (02, 1234567);
+
+-- Inserting data into Goes_to
+-- Which Customers use which branch
+INSERT INTO Goes_to
+(
+    customer_id,
+    branch_id
+)
+VALUES
+(04, 01),
+(03, 01),
+(01, 01),
+(02, 03);
 
 
 

@@ -11,38 +11,34 @@
 	</script>
 </head>
 
-    <body onload="browseAccounts()">
+    <body>
     <div id="browse">
     <caption>Accounts</caption>
     <table border="1" cellpadding="5">
     <thead> 
     <tr>
-        <!-- Iterate through each key in the first entry to get the
-        column name -->
-        {% for key in accounts[0].keys() %}
-        <!-- Create a <th> tag with the key inside of it, this will be
-        our header row -->
-        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
-        <!-- End of this for loop -->
-        {% endfor %}
+        <tr>
+        <th>Account No.</th>
+        <th>Balance</th>
+    </tr>
     </tr>
     <tbody>
-
-    <!-- Now, iterate through every account in Accounts -->
-    {% for account in accounts %}
-    <tr>
-        <!-- Then iterate through every key in the current account dictionary -->
-        <td>{{account.ID}}</td>
-        <td>${{account.balance}}</td>
-        <td><a href="/transaction" class="btn btn-default">Transactions</a></td>
-        <td><a href="edit_account/{{account.ID}}" class="btn btn-default">Edit</a></td>
-		<td><a href="delete_account/{{account.ID}}" class="btn btn-default">Delete</a></td>
-    </tr>
-    {% endfor %}
+    {% if accounts %}
+        <!-- Now, iterate through every account in Accounts -->
+        {% for account in accounts %}
+        <tr>
+            <!-- Then iterate through every key in the current account dictionary -->
+            <td><a href="/transaction/{{account.ID}}" class="btn btn-default">{{account.ID}}</a></td>
+            <td>${{account.balance}}</td>
+            <td><a href="edit_account/{{account.ID}}" class="btn btn-default">Edit</a></td>
+            <td><a href="delete_account/{{account.ID}}" class="btn btn-default">Delete</a></td>
+        </tr>
+        {% endfor %}
+     {% endif %}
     </table>
     <p>&nbsp;</p>
     </div>	<!-- browse -->
-
+   
 
 	<div id="insert">
     <!-- form to INSERT new data into Accounts-->
@@ -60,28 +56,28 @@
         <input type="submit" value="Add Account" name="Add_Account" class="btn btn-primary" style="margin:.5rem;">
         <input class="btn" type="button" value="Cancel" onClick="browseAccounts()"> 
     </form>
+    </div><!--insert-->
+{% if accounts %}
+    <div id="edit">
+        <!-- form to edit data in Accounts-->
+        <form id="editAccount" action="/edit_account/{{accounts[0].ID}}" method="POST">
+            <legend><strong>Edit Balance</strong></legend>
+            <fieldset>
+                <label for="type">ID</label>
+                <select class="form-control" id="accountID" name="accountID" placeholder="" required>
+                    {% for account in accounts %}
+                        <option>{{account.ID}}</option>
+                    {% endfor %}
+                </select>
+                <label for="balance">New Balance:</label>
+                <input type="text" class="form-control" id="balance" name="balance" pattern="[0-9]{1,}" required> 
+            </fieldset>
+            <input class="btn" type="submit" value="Edit Balance" name="Edit_Account">
+            <input class="btn" type="button" value="Cancel" onClick="browseAccounts()" style="margin:.5rem;"> 
+        </form>
+    </div><!--edit-->
+{% endif %}
 
-</div><!--insert-->
-<div id="edit">
-    <!-- form to edit data in Accounts-->
-    <form id="editAccount" action="/edit_account/{{accounts[0].ID}}" method="POST">
-        <legend><strong>Edit Balance</strong></legend>
-        <fieldset>
-            <label for="type">ID</label>
-            <select class="form-control" id="accountID" name="accountID" placeholder="" required>
-                {% for account in accounts %}
-                    <option>{{account.ID}}</option>
-                {% endfor %}
-			</select>
-            <label for="balance">New Balance:</label>
-            <input type="text" class="form-control" id="balance" name="balance" pattern="[0-9]{1,}" required> 
-        </fieldset>
-        <input class="btn" type="submit" value="Edit Balance" name="Edit_Account">
-        <input class="btn" type="button" value="Cancel" onClick="browseAccounts()" style="margin:.5rem;"> 
-    </form>
-</div><!--edit-->
-
-
-    <td><a href="/" class="btn btn-default">Return</a></td>
+    <a href="/" class="btn btn-default">Return</a>
 </body>
 </html>
