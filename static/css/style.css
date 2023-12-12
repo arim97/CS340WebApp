@@ -6,20 +6,21 @@ body {
     font-weight: 300;
     line-height: 1.42em;
     color: #CCC3D6;
-    background-color: white;
+    background-color: rgb(209, 255, 202);
     margin: auto;
+    margin-left: 25px;
     padding: auto;
-    text-align: center;
+    
 }
 
 h1 {
     font-size: 3em;
     line-height: 1em;
-    color: rgb(3, 244, 252);
+    color: rgb(29, 60, 146)
 }
 
-h3 {
-    color: grey;
+h3, caption, legend {
+    color: rgb(29, 60, 146);
 }
 
 
@@ -35,18 +36,24 @@ nav a:hover {
 }
 
 
-
 table {
-    margin-left: auto;
     margin-right: auto;
+    border: 1px solid black;
+}
+
+form {
+    margin-right: auto;
+}
+tbody {
+    overflow: auto;
 }
 
 th {
-    padding: 2% 15px;
+    margin-right: auto;
     font-weight: bold;
     font-size: 1em;
     color: rgb(46, 78, 239);
-    background-color: rgb(100, 237, 203);
+    background-color: rgb(190, 220, 248);
 }
 
 td {
@@ -54,6 +61,8 @@ td {
     font-weight: bold; 
     text-align: center;
     font-size: 1em;
+    overflow: hidden;
+    padding: 4px 6px;
     
 }
 
@@ -65,7 +74,7 @@ td a {
 
 td {
     color: black;
-    background-color: rgb(100, 237, 203);
+    background-color: rgb(199, 222, 241);
 }
 
 td:nth-last-child(2) a {
@@ -99,7 +108,9 @@ td:last-child:hover a {
 
 
 fieldset {
-    background-color: rgb(100, 237, 203);
+    display: inline;
+    margin-right: auto;
+    background-color: rgb(199, 222, 241);
 }
 
 
@@ -114,9 +125,8 @@ label {
 input,
 select,
 textarea {
-    display: inline-block;
-    width: 120px;
-    padding: 2% 15px;   
+    display: inline;
+    padding: 0.5% 15px;   
 }
 
 

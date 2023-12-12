@@ -9,10 +9,10 @@
 <a href="/branches" class="btn btn-default">Branches</a>
 </nav>
  
- <h1>Account No. :{{ID}}<</h1>
+ <h1>Account No. :{{ID}}</h1>
 
 
- <caption>Account Transactions:</caption>
+ <legend><strong> Account Transactions</strong></legend>
 
     <table border="1" cellpadding="5">
     <thead>
@@ -43,10 +43,42 @@
     {% endfor %}
     </table>
   
+    <div>
+		<!-- form to INSERT new data into Transactions-->
+		<form id="Add_Transaction" action="/transaction/{{ID}}" method="post">
+			<legend><strong>Add Transaction</strong></legend>
+			<fieldset>
+                <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
+				<input type="hidden" value="{{ID}}" class="form-control" id="sender_id" name="sender_id"  >
+				<label for="destination">To:</label>
+				<select class="form-control" id="destination" name="destination" placeholder="" required>
+                    <option value=" ">None</option>
+                    {% for account in Accounts %}
+                        <option value="{{account.account_id}}">{{account.account_id}}</option>
+                    {% endfor %}
+                </select>
+				<label for="amount">Amount:</label>
+				<input type="text" class="form-control" id="amount" name="amount" pattern="[0-9]{1,}" required>
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" value="2023-11-03" min="2023-11-01" max="2025-12-31" required />
+                <label for="Type">Type:</label>
+				<select class="form-control" id="type" name="type" pattern="[0-3]{1}" required>
+					<option value=" ">&nbsp;</option>
+					<option value="Transfer">Transfer</option>
+					<option value="Withdraw">Withdraw</option>
+					<option value="Deposit">Deposit</option>
+			
+				</select>
+				<label for="comments">Comments:</label>
+				<input type="text" class="form-control" id="comments" name="comments" commentn="[A-Za-z0-9]{1,}" required> 
+            </fieldset>
+
+            <!-- Create 'Add Transaction' and 'Cancel' buttons -->
+			<input type="submit" value="Add Transaction" name="Add_Transaction" class="btn btn-primary" style="margin:.5rem;">
 
 
 
-   <caption>Customers in Account</caption>
+    <legend><strong>Customers in Account</strong></legend>
     <table border="1" cellpadding="5">
     <thead>
     
@@ -72,7 +104,7 @@
 
      
     <!-- form to INSERT a new customer into Account-->
-    <caption>Insert a new customer into this account</caption>
+    <legend><strong>Insert a new customer into this account</strong></legend>
     <form id="Add_to_Acc" action="/transaction/{{ID}}" method="post">
         <fieldset>
             <input type="hidden" class="form-control" value="{{ID}}" id="aid" name="aid" placeholder="">
@@ -85,7 +117,7 @@
         <input type="submit" value="Add into Account" name="Add_to_Acc" class="btn btn-primary" style="margin:.5rem;">
     </form>
     <!-- Change a customer's home branch-->
-    <caption>Update home branch for clients in this account</caption>
+    <legend><strong>Update home branch for clients in this account</strong></legend>
     <form id="change_branch" action="/change_branch" method="post">
         <fieldset>
             <input type="hidden" value="{{ID}}" id="aid" name="aid" placeholder="">
@@ -95,7 +127,7 @@
                 {% endfor %}
             </select>
              <select class="form-control" id="bid" name="bid" placeholder="" >
-                <option value="NULL">&nbsp;</option>
+                <option value="0">None</option>
                 {% for branch in Branches %}
                 <option value="{{branch.branch_id}}">Name:{{branch.branch_name}}, ID:{{branch.branch_id}} </option>
                 {% endfor %}
@@ -103,4 +135,4 @@
         </fieldset>
         <input type="submit" value="Save" name="change_branch" class="btn btn-primary" style="margin:.5rem;">
     </form>
-<a href="/" class="btn btn-default">Return</a>
+ <a href="/" class="btn btn-default"><button>Home</button></a>

@@ -1,5 +1,4 @@
-# Code based on CS340 Flask starter app
-# 
+# Code based on CS340 Flask starter app https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master/bsg_people_app
 from flask import Flask, render_template, json, redirect
 from flask_mysqldb import MySQL
 from flask import request
@@ -19,7 +18,6 @@ app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 mysql = MySQL(app)
 
 # Routes 
-
 # Homepage route
 @app.route('/')
 def root():
@@ -52,6 +50,7 @@ def Accounts():
             mysql.connection.commit()
             # redirect back to account page
             return redirect("/account")
+       
 
 
 # route for delete functionality, deleting an account from accounts,
@@ -105,15 +104,17 @@ def Transactions(id):
                     FROM Customers 
                     JOIN In_Account ON Customers.customer_id = In_Account.customer_id
                     JOIN Accounts ON In_Account.account_id = Accounts.account_id
-                    JOIN Goes_to ON Goes_to.customer_id = In_Account.customer_id
+                    LEFT JOIN Goes_to ON Goes_to.customer_id = In_Account.customer_id
                     LEFT JOIN Branches ON Branches.branch_id = Goes_to.branch_id
                     WHERE Accounts.account_id = %s;""" % (id)
         query2 = """SELECT *
                     FROM Customers 
                     LEFT JOIN In_Account ON Customers.customer_id = In_Account.customer_id AND In_Account.account_id = %s
                     WHERE In_Account.customer_id IS NULL;""" % (id)
-        
+        # Fetch all branchs to allow dynamic editing branch functionality
         query3 = "SELECT * FROM Branches;"
+        # Fetch all accounts to allow dynamic transactions functionality
+        query4 = "SELECT * FROM Accounts WHERE account_id != %s;" % (id)
         cur = mysql.connection.cursor()
         cur.execute(query)
         results = cur.fetchall()
@@ -123,7 +124,9 @@ def Transactions(id):
         results2 = cur.fetchall()
         cur.execute(query3)
         results3 = cur.fetchall()
-        return render_template("transaction.j2",ID = id, Transactions=results, In_acc = results1, Out_acc = results2, Branches = results3)
+        cur.execute(query4)
+        results4 = cur.fetchall()
+        return render_template("transaction.j2",ID = id, Transactions=results, In_acc = results1, Out_acc = results2, Branches = results3, Accounts = results4)
     
     # Separate out the request methods, in this case this is for a POST
     # insert a customer into the In_account table, signifying as part of a shared account.
@@ -133,11 +136,28 @@ def Transactions(id):
             # grab user form inputs
             account_id = request.form["aid"]
             customer_id = request.form["cid"]
-            query = "INSERT INTO In_Account (account_id, customer_id) VALUES (%s, %s)"
+            query = "INSERT INTO In_Account (account_id, customer_id) VALUES (%s, %s);"
+            #query1 = "INSERT INTO Goes_to (branch_id, customer_id) VALUES (NULL, %s);"
             cur = mysql.connection.cursor()
             cur.execute(query, (account_id, customer_id))
+            #cur.execute(query1, (customer_id))
             mysql.connection.commit()
             # redirect back to Transactions page for this account
+            return redirect("/transaction/%s" % id)
+         # fire off if user presses the Add Transaction button
+        if request.form.get("Add_Transaction"):
+            # grab user form inputs
+            id = request.form["sender_id"]
+            destination = request.form["destination"]
+            amount = request.form["amount"]
+            date = request.form["date"]
+            type = request.form["type"]
+            comments = request.form["comments"]
+            query = "INSERT INTO Transactions (sender_id, destination_id, amount, date, type, comments) VALUES (%s, %s, %s, %s, %s, %s)"
+            cur = mysql.connection.cursor()
+            cur.execute(query, (id, destination, amount, date, type, comments))
+            mysql.connection.commit()
+            # redirect back to account page
             return redirect("/transaction/%s" % id)
        
 
@@ -165,7 +185,8 @@ def change_branch():
         customer_id = request.form["cid"]
         branch_id = request.form["bid"]
         print("aid = " + account_id, "cid = " + customer_id, "bid = " + branch_id)
-        query = "UPDATE Goes_to SET Goes_to.branch_id = %s WHERE Goes_to.customer_id = %s"
+        # Insert or update 
+        query = "REPLACE Goes_to (branch_id, customer_id) VALUES (%s, %s);"
         cur = mysql.connection.cursor()
         cur.execute(query, (branch_id, customer_id))
         mysql.connection.commit()

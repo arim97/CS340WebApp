@@ -52,7 +52,7 @@ CREATE TABLE `Transactions` (
     comments text DEFAULT NULL,
     sender_id int,
     PRIMARY KEY (transaction_id),
-    FOREIGN KEY (sender_id) REFERENCES Accounts(account_id) ON DELETE CASCADE
+    FOREIGN KEY (sender_id) REFERENCES Accounts(account_id) ON UPDATE CASCADE
   
 );
 
@@ -63,7 +63,7 @@ CREATE TABLE `Transactions` (
 DROP TABLE IF EXISTS `Branches`;
 
 CREATE TABLE `Branches` (
-    branch_id int(11) NOT NULL AUTO_INCREMENT UNIQUE,
+    branch_id int(11) AUTO_INCREMENT UNIQUE,
     branch_name varchar(255) NOT NULL,
     address varchar(255) NOT NULL,
     phone varchar(64) NOT NULL,
@@ -81,12 +81,11 @@ DROP TABLE IF EXISTS `Cards`;
 
 CREATE TABLE `Cards` (
     card_id int(11) NOT NULL PRIMARY KEY,
-    account_id int(11) NOT NULL,
+    account_id int(11) NULL,
     security_code int(3) NOT NULL,
     exp_date date NOT NULL,
     CONSTRAINT ucard UNIQUE(card_id, security_code, exp_date),
-    FOREIGN KEY (account_id) REFERENCES Accounts(account_id) ON DELETE CASCADE 
-  
+    FOREIGN KEY (account_id) REFERENCES Accounts(account_id) ON UPDATE CASCADE 
 );
 
 
@@ -113,13 +112,14 @@ DROP TABLE IF EXISTS `Goes_to`;
 
 CREATE TABLE `Goes_to` (
     branch_id INT,
-    customer_id INT,
+    customer_id INT UNIQUE,
     CONSTRAINT clientat UNIQUE(customer_id, branch_id),
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (branch_id) REFERENCES Branches(branch_id) ON DELETE CASCADE ON UPDATE CASCADE
-  
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE,
+    FOREIGN KEY (branch_id) REFERENCES Branches(branch_id) ON DELETE CASCADE
 );
-
+-- UPDATE Queries with NULL values would fail in Flask for some reason but would literally work anywhere else.
+-- Turn off the specific FK constraint so it would run in Flask
+ALTER TABLE Goes_to DROP FOREIGN KEY Goes_to_ibfk_2;
 -- Turn on foreign key checks
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
@@ -175,13 +175,11 @@ INSERT INTO Branches
     address,
     phone,
     manager
-   
 )
 VALUES
 ('Money Place', 'SW 129th Random Ave', '206-343-2344', 'Nathan Gummy'),
 ('Cash Location', '2000 Eastlake Ave E', '231-324-8759', 'Holly Fisher'),
 ('Currency Area', '238 NW 19th St', '541-324-6748', 'Urick Taylor');
-
 -- Inserting into table Cards
 INSERT INTO Cards
 (

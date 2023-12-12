@@ -19,7 +19,7 @@
     <body>
     <div id="browse">
     <h1>Accounts</h1>
-    <table border="1" cellpadding="5">
+    <table >
     <thead> 
     <tr>
         <tr>
@@ -59,7 +59,6 @@
 
         <!-- Create 'Add Account' and 'Cancel' buttons -->
         <input type="submit" value="Add Account" name="Add_Account" class="btn btn-primary" style="margin:.5rem;">
-        <input class="btn" type="button" value="Cancel" onClick="browseAccounts()"> 
     </form>
     </div><!--insert-->
 {% if accounts %}
@@ -78,11 +77,10 @@
                 <input type="text" class="form-control" id="balance" name="balance" pattern="[0-9]{1,}" required> 
             </fieldset>
             <input class="btn" type="submit" value="Edit Balance" name="Edit_Account">
-            <input class="btn" type="button" value="Cancel" onClick="browseAccounts()" style="margin:.5rem;"> 
         </form>
     </div><!--edit-->
 {% endif %}
- <a href="/" class="btn btn-default">Return</a>
+ <a href="/" class="btn btn-default"><button>Home</button></a>
 
 </body>
 </html>

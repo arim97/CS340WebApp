@@ -7,6 +7,6 @@ This project is a database-driven website for a banking system. The website is d
 
 ## Sources Cited
 
-    Font from url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+Font from url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 
-    Based on templates sourced from https://github.com/osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2
+Based on templates sourced from https://github.com/         osu-cs340-ecampus/flask-starter-app/blob/master/bsg_people_app/templates/edit_people.j2

@@ -8,7 +8,7 @@
 <body>
     <div>
         <table border="1" cellpadding="5"> 
-            <caption> Add a card: </caption>
+            <caption> Editing card: </caption>
             <!-- Access accounts tuple passed from app.py -->
             {% if Cards %}
                 <thead>
@@ -34,12 +34,12 @@
         </table>
 
         <div id="edit">
-            <!-- form to edit data in Accounts-->
+            <!-- form to edit data in Cards-->
             <form id="editCard" action="/edit_card/{{Cards[0].card_id}}" method="post">
-                <legend><strong>Edit Account</strong></legend>
+                <legend><strong>Edit Card</strong></legend>
                 <fieldset>
-                    <!-- We can preset form inputs to match attributes currently stored for 'id' of account to be updated via value= and accessing our passed accounts tuple -->
-                    <!-- Create hidden form input to store the passed 'id' of the account we are editing so we can access it easily in our 'POST' method in our app.py -->
+                    <!-- We can preset form inputs to match attributes currently stored for 'id' of card to be updated via value= and accessing our passed cards tuple -->
+                    <!-- Create hidden form input to store the passed 'id' of the card we are editing so we can access it easily in our 'POST' method in our app.py -->
                     <input type="hidden" value="{{Cards[0].card_id}}" class="form-control" id="card_id" name="card_id" required>
                     
     

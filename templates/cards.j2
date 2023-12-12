@@ -63,6 +63,7 @@
             <input type="number" class="form-control" id="card_id" name="card_id" placeholder="" required>
                 <label for="type">Account No.</label>
                 <select class="form-control" id="account_id" name="account_id" placeholder="" required>
+                    <option value="0">&nbsp;</option>
                     {% for account in Accounts %}
                         <option>{{account.account_id}}</option>
                     {% endfor %}
@@ -76,8 +77,6 @@
         <!-- Create 'Create Card' button-->
         <input type="submit" value="Add Card" name="Add_Card" class="btn btn-primary" style="margin:.5rem;">
     </form>
-
-
-
+ <a href="/" class="btn btn-default"><button>Home</button></a>
 </body>
 </html>
