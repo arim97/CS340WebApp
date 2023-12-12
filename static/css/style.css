@@ -1,7 +1,123 @@
-table, thead, tr {
-    border: 1px solid black;
+@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 
-  }
-  body {
-    background-color: powderblue;
-  }
+body {
+    font-family: "Open Sans", sans-serif;
+    font-weight: 300;
+    line-height: 1.42em;
+    color: #CCC3D6;
+    background-color: white;
+    margin: auto;
+    padding: auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3em;
+    line-height: 1em;
+    color: rgb(3, 244, 252);
+}
+
+h3 {
+    color: grey;
+}
+
+
+nav a {
+    font-weight: bold;
+    font-size: 1em;
+    color: #5aa6c9;
+    padding: 5px 20px;
+}
+
+nav a:hover {
+    color: #42ff71;
+}
+
+
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th {
+    padding: 2% 15px;
+    font-weight: bold;
+    font-size: 1em;
+    color: rgb(46, 78, 239);
+    background-color: rgb(100, 237, 203);
+}
+
+td {
+    padding: 2% 10px;
+    font-weight: bold; 
+    text-align: center;
+    font-size: 1em;
+    
+}
+
+td a {
+    display: block;
+}
+
+
+
+td {
+    color: black;
+    background-color: rgb(100, 237, 203);
+}
+
+td:nth-last-child(2) a {
+    color: #7498D1;
+}
+
+td:last-child a {
+    color: #FB667A;
+}
+
+
+
+/* from https://css-tricks.com/almanac/selectors/n/nth-last-child/ */
+td:nth-last-child(2):hover {
+    background-color: #7498D1;
+    color: #0E1119;
+    box-shadow: #3483A7 -1px 1px, #3483A7 -2px 2px, #3483A7 -3px 3px, #3483A7 -4px 4px, #3483A7 -5px 5px, #3483A7 -6px 6px;
+}
+
+td:last-child:hover {
+    background-color: #FB667A;
+    color: #0E1119;
+    box-shadow: #9F3D4A -1px 1px, #9F3D4A -2px 2px, #9F3D4A -3px 3px, #9F3D4A -4px 4px, #9F3D4A -5px 5px, #9F3D4A -6px 6px;
+}
+
+td:nth-last-child(2):hover a,
+td:last-child:hover a {
+    color: #0E1119;
+}
+
+
+
+fieldset {
+    background-color: rgb(100, 237, 203);
+}
+
+
+
+label {
+    display: inline-block;
+    text-align: left;
+    padding: 2% 15px;
+    color: black;
+}
+
+input,
+select,
+textarea {
+    display: inline-block;
+    width: 120px;
+    padding: 2% 15px;   
+}
+
+
+
